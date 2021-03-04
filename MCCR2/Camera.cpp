@@ -10,6 +10,12 @@
 using namespace std;
 using namespace glm;
 
+vec3 Camera::getPos()
+{
+	return this->position;
+}
+
+
 void Camera::keyboardInput(Direction dir, float time)
 {
 	float vel = time * movementSpeed;

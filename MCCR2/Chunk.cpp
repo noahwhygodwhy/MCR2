@@ -384,6 +384,8 @@ CompoundTag* decompress(string saveFolder, int chkx, int chkz)
 }
 
 
+//TODO: should make it use the EBO, even if it's just for the coords that each cubeoid shares, not between cuboids
+//shouldn't be too hard...lol
 void Chunk::initializeBuffers()
 {
 
@@ -407,10 +409,15 @@ void Chunk::initializeBuffers()
 
 void Chunk::bufferData()
 {
+
+	glBindVertexArray(VAO);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	glBufferData(GL_ARRAY_BUFFER, this->verts.size()*sizeof(Vert), this->verts.data(), GL_STATIC_DRAW);
 }
 
 void Chunk::draw()
 {
-
+	glBindVertexArray(VAO);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	glDrawArrays(GL_TRIANGLES, 0, this->verts.size());
 }

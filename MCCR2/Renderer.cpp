@@ -388,7 +388,7 @@ void Renderer::run(World& world)
 		mat4 projection = perspective(radians(70.0f), (float)screenX / (float)screenY, 0.1f, 256.0f);
 		shader.setMatFour("projection", projection);
 
-		world.giveLocation(cam.)
+		world.givePos(cam.getPos());
 
 		world.draw();//TODO:
 		//glDrawArrays(GL_TRIANGLES, 0, originChunk.size());

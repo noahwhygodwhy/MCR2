@@ -6,13 +6,14 @@
 #include <iostream>
 #include "Chunk.hpp"
 #include <string>
+#include "Asset.hpp"
 
 
+string saveFolder = "D:/OneDrive/Personal/MCCR2/New World";
 
 using namespace std;
 using namespace glm;
 
-string saveFolder = "D:/OneDrive/Personal/MCCR2/New World";
 
 int main(void)
 {
@@ -20,6 +21,7 @@ int main(void)
 	r.initializeOpenGL();
 
 	Asset* ass = new Asset(r.loadTextures(TEXTURE_DIR_PATH));
+	World w(saveFolder, ass, 1);
 
-	Chunk c(saveFolder + "/" + "region", 0, 0, ass);
+	Chunk c(saveFolder + "/region", 0, 0, ass);
 }
