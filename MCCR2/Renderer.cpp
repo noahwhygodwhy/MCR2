@@ -365,46 +365,6 @@ void Renderer::run(World& world)
 {
 	glBindTexture(GL_TEXTURE_2D_ARRAY, largeTextureStack);
 	glClearColor(0.529f, 0.808f, 0.922f, 1.0f);
-	glBindVertexArray(VAO);
-
-
-	//vector<Vert> originChunk = vertisizedChunks.at({ 0, 0 });
-	/*printf("there are %u vertices\n", originChunk.size());
-
-	for (int i = 0; i < originChunk.size(); i++)
-	{
-		Vert a = originChunk.at(i);
-		printf("vert %i ---- X:%f, Y:%f, Z:%f, U:%f, V:%f, T:%f\n", i, a.coord.x, a.coord.y, a.coord.z, a.uv.x, a.uv.y, a.texIndex);
-	}*/
-
-	//size_t sizeInBytes = originChunk.size() * sizeof(Vert);
-
-
-	//glBufferData(GL_ARRAY_BUFFER, sizeInBytes, originChunk.data(), GL_STATIC_DRAW);
-
-
-	size_t offset = 0;
-	//glBufferSubData(GL_ARRAY_BUFFER, offset, sizeInBytes, originChunk.data());
-
-
-	/*size_t totalSize = 0;
-	for (const auto& v : vertisizedChunks)
-	{
-		totalSize += v.second.size();
-	}
-	printf("totalsize is %u\n", totalSize * sizeof(Vert));
-
-
-	glBufferData(GL_ARRAY_BUFFER, totalSize * sizeof(Vert), 0, GL_STATIC_DRAW);
-
-	size_t offset = 0;
-	for (const auto& v : vertisizedChunks)
-	{
-		glBufferSubData(GL_ARRAY_BUFFER, offset, v.second.size()*sizeof(Vert), v.second.data());
-		offset += v.second.size() * sizeof(Vert);
-	}
-
-	printf("totalOffset is %u\n", offset);*/
 
 	shader.setInt("layerCount", layerCount);
 
@@ -415,7 +375,6 @@ void Renderer::run(World& world)
 		glClear(GL_COLOR_BUFFER_BIT);
 		glClear(GL_DEPTH_BUFFER_BIT);
 
-		//TODO: get two boxes rendering, then work on the larger pictures
 
 		float currentFrame = glfwGetTime();
 		deltaTime = currentFrame - lastFrame;
@@ -429,6 +388,9 @@ void Renderer::run(World& world)
 		mat4 projection = perspective(radians(70.0f), (float)screenX / (float)screenY, 0.1f, 256.0f);
 		shader.setMatFour("projection", projection);
 
+		world.giveLocation(cam.)
+
+		world.draw();//TODO:
 		//glDrawArrays(GL_TRIANGLES, 0, originChunk.size());
 		//glDrawArrays(GL_TRIANGLES, 0, originChunk.size());
 

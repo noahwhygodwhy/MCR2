@@ -28,6 +28,8 @@ public:
 	Chunk(string saveFolder, int chkx, int chkz, Asset* ass);
 	~Chunk();
 	void initializeBuffers();
+	void bufferData();
+	void draw();
 	void createChunk(CompoundTag* ct, Asset* ass);
 	void generateVertices();
 

@@ -42,7 +42,6 @@ class Renderer
 	Camera cam;
 	Shader shader;
 	GLFWwindow* window;
-	unsigned int VBO, VAO, EBO;
 	int32_t layerCount;
 public:
 	Renderer(int screenX, int screenY);

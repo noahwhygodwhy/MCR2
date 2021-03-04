@@ -1,4 +1,5 @@
 #include "Chunk.hpp"
+#include "Renderer.hpp"
 
 using namespace std;
 using namespace std::filesystem;
@@ -402,4 +403,14 @@ void Chunk::initializeBuffers()
 
 	glVertexAttribPointer(2, 1, GL_FLOAT, GL_FALSE, stride, (void*)(5 * sizeof(float))); //tex layer
 	glEnableVertexAttribArray(2);
+}
+
+void Chunk::bufferData()
+{
+	glBufferData(GL_ARRAY_BUFFER, this->verts.size()*sizeof(Vert), this->verts.data(), GL_STATIC_DRAW);
+}
+
+void Chunk::draw()
+{
+
 }
