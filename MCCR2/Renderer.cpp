@@ -4,12 +4,13 @@
 
 #define STB_IMAGE_IMPLEMENTATION
 
-#include "Renderer.h"
 #include "Shader.h"
+#include "World.hpp"
 #include <vector>
 #include <filesystem>
 #include <algorithm>
 #include <glm/glm.hpp>
+#include "Renderer.hpp"
 
 
 using namespace std;
@@ -367,7 +368,7 @@ void Renderer::run(World& world)
 	glBindVertexArray(VAO);
 
 
-	vector<Vert> originChunk = vertisizedChunks.at({ 0, 0 });
+	//vector<Vert> originChunk = vertisizedChunks.at({ 0, 0 });
 	/*printf("there are %u vertices\n", originChunk.size());
 
 	for (int i = 0; i < originChunk.size(); i++)
@@ -376,10 +377,10 @@ void Renderer::run(World& world)
 		printf("vert %i ---- X:%f, Y:%f, Z:%f, U:%f, V:%f, T:%f\n", i, a.coord.x, a.coord.y, a.coord.z, a.uv.x, a.uv.y, a.texIndex);
 	}*/
 
-	size_t sizeInBytes = originChunk.size() * sizeof(Vert);
+	//size_t sizeInBytes = originChunk.size() * sizeof(Vert);
 
 
-	glBufferData(GL_ARRAY_BUFFER, sizeInBytes, originChunk.data(), GL_STATIC_DRAW);
+	//glBufferData(GL_ARRAY_BUFFER, sizeInBytes, originChunk.data(), GL_STATIC_DRAW);
 
 
 	size_t offset = 0;
@@ -429,7 +430,7 @@ void Renderer::run(World& world)
 		shader.setMatFour("projection", projection);
 
 		//glDrawArrays(GL_TRIANGLES, 0, originChunk.size());
-		glDrawArrays(GL_TRIANGLES, 0, originChunk.size());
+		//glDrawArrays(GL_TRIANGLES, 0, originChunk.size());
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();

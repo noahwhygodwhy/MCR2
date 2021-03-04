@@ -278,10 +278,10 @@ Face Asset::parseFaceJson(const json& faces, const string& faceStr, const unorde
 		toReturn.uv = vec4(stoi(uv[0].dump()), stoi(uv[1].dump()), stoi(uv[2].dump()), stoi(uv[3].dump()));//returns the uv in the order x1, y1, x2, y2
 		//toReturn.uv = vec4(stoi(uv[0].dump()), stoi(uv[1].dump()), stoi(uv[2].dump()), stoi(uv[3].dump()));//returns the uv in the order x1, y1, x2, y2
 	}
-	//if (faces[faceStr].contains("tintindex"))
-	//{
-	//	toReturn.tintIndex = faces[faceStr].at("tintIndex");
-	//}
+	if (faces[faceStr].contains("tintindex"))
+	{
+		toReturn.tintIndex = faces[faceStr].at("tintIndex");
+	}
 
 	string referenceName = string(faces[faceStr]["texture"]).substr(1);
 	string fullName = textures.at(referenceName);

@@ -15,9 +15,9 @@ using namespace nlohmann;
 
 using namespace glm;
 
-static const string TEXTURE_DIR_PATH = "../MCRenderer/minecraft/textures/";
-static const string MODEL_DIR_PATH = "../MCRenderer/minecraft/models/";
-static const string BLOCKSTATE_DIR_PATH = "../MCRenderer/minecraft/blockstates/";
+static const string TEXTURE_DIR_PATH = "../MCR2/minecraft/textures/";
+static const string MODEL_DIR_PATH = "../MCR2/minecraft/models/";
+static const string BLOCKSTATE_DIR_PATH = "../MCR2/minecraft/blockstates/";
 
 
 struct Vert
@@ -50,7 +50,7 @@ struct Face
 	uint8_t cullFace = 0b00000000;
 	ivec4 uv = ivec4(0, 0, 16, 16);
 	int rotation = 0;//TODO handle texture rotation, not just block rotation
-	//int tintIndex = -1;
+	int tintIndex = -1;
 	//todo tint index
 };
 
@@ -80,7 +80,7 @@ struct Model
 	ivec3 coords = vec3(0, 0, 0);
 	vector<Element> elements;
 	string model = "NULL";
-	uint8_t faces = 0b00111111; //can be used in geo shader..?
+	uint8_t faces = 0b00111111; 
 	//todo: int weight = 1;?
 	bool AmbOcc = true;
 	bool cullForMe = false;

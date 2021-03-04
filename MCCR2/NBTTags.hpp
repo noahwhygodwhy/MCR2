@@ -1,8 +1,11 @@
+#ifndef NBTTAGS_H
+#define NBTTAGS_H
 #pragma once
 #include <vector>
+#include <string>
 #include <cstdint>
-#include "Chunk.h"
-#include "RegionLoader.h"
+//#include "Chunk.hpp"
+//#include "RegionLoader.h"
 #include <unordered_map>
 
 enum TagType
@@ -188,7 +191,7 @@ private:
 
 string tts(TagType t);
 
-vector<Chunk> loadRegion(string filename);
+//vector<Chunk> loadRegion(string filename);
 //SuperTag* parseNBT(vector<unsigned char>& decompressedData, size_t *index);
 //SuperTag* parseNBT(vector<unsigned char>& decompressedData, size_t* index, bool justPayload = false, TagType type = TAG_NOT_EXIST);
 
@@ -439,3 +442,5 @@ TagArray<int64_t> parseLongArrayTag(const vector<unsigned char>& decompressedDat
 CompoundTag parseCompoundTag(vector<unsigned char>& decompressedData, size_t* index, TagType type);
 TagList parseListTag(vector<unsigned char>& decompressedData, size_t* index, TagType type);
 void printTags(SuperTag root);*/
+
+#endif
