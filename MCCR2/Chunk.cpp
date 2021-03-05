@@ -81,6 +81,9 @@ vec4 rotateAroundCenter(const mat4& rm, const vec4& b)
 //TODO: this is what sets up the UVs, so when it's wrong, this is to blame
 void addFace(vector<Vert>& verts, const vec3& a, const vec3& b, const vec3& c, const vec3& d, vec4 uv, int texRotation, int uvRotation, bool uvLock, int texture)
 {
+	
+	
+
 	vec2 uv00 = vec2(uv.x, uv.y) / 16.0f;
 	vec2 uv01 = vec2(uv.x, uv.w) / 16.0f;
 	vec2 uv11 = vec2(uv.z, uv.w) / 16.0f;
@@ -154,7 +157,7 @@ void Chunk::generateVertices(const array<Section*, 20>& sections, const array<ar
 				{
 					for (const auto& block : zSlice)
 					{
-						if (block.model.compare(string("block/air"))!=0 && block.model.compare(string("NULL"))!=0) //TODO: needs to include other types of air too
+						if (block.model != "block/air" && block.model != "block/void_air" && block.model != "block/cave_air" && block.model != "NULL") //TODO: needs to include other types of air too
 						{
 							//printf("-----------------------------\nverticizing %s\n", block.model.c_str());
 							for (const Element& e : block.elements)
@@ -590,6 +593,9 @@ void Chunk::bufferData()
 	glBindVertexArray(VAO);
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	glBufferData(GL_ARRAY_BUFFER, this->verts.size()*sizeof(Vert), this->verts.data(), GL_STATIC_DRAW);
+
+
+	//this->verts.clear();
 }
 
 void Chunk::draw()

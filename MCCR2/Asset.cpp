@@ -56,7 +56,7 @@ void combineModels(Model& keeping, const Model& discarding)
 	//so you'll notice that this doesn't take the name of the models
 	//into acount, and that is because at this point the names aren't used.
 	keeping.elements.insert(keeping.elements.end(), discarding.elements.begin(), discarding.elements.end());
-	if (discarding.cullForMe)
+	if (discarding.cullForMe||keeping.cullForMe)
 	{
 		keeping.cullForMe = true;
 	}
@@ -86,100 +86,46 @@ void combineModels(Model& keeping, const Model& discarding)
 
 Model Asset::findModelFromAssets(string name, const unordered_map<string, string>& attributes)
 {
-
-	//if (name != "minecraft:grass_block" && name != "minecraft:bedrock" && name != "minecraft:dirt" && name != "minecraft:air")
-	if (name == "minecraft:redstone_wall_torch")
+	Model m;
+	name = name.substr(name.find(":") + 1);
+	BlockState bs = assets[name];
+	for (Conditional variant : bs.variants) //for each variant
 	{
-
-		Model m;
-		name = name.substr(name.find(":") + 1);
-		BlockState bs = assets[name];
-		printf("------------------------\nfindModelFromAssets of name: %s\nattributes: \n", name.c_str());
-		for (pair<string, string> val : attributes)
+		if (variant.when.size() == 0)
 		{
-			printf("%s=%s\n", val.first.c_str(), val.second.c_str());
-		}
-		printf("\n");
-		//god this naming scheme was a mistake
-		//printf("it has at least one variant: %s\n", bs.variants.empty() ? "false" : "true");
-		for (Conditional variant : bs.variants) //for each variant
-		{
-			printf("testing for %s\n", variant.model.model.c_str());
-			if (variant.when.size() == 0)
+			if (m.model == "NULL")
 			{
-				if (m.model == "NULL")
-				{
-					printf("first add\n");
-					m = variant.model;
-				}
-				else
-				{
-					printf("not first add\n");
-					combineModels(m, variant.model);
-				}
+				m = variant.model;
 			}
-			for (Conditions variantConditions : variant.when) //for each possible set of conditions
+			else
 			{
+				combineModels(m, variant.model);
+			}
+		}
+		for (Conditions variantConditions : variant.when) //for each possible set of conditions
+		{
 
-				printf("\n---if list: \n");
-				//bool added = false;
-				bool match = true;
-
-
-
-				for (pair<string, string> condition : variantConditions.conditions) //for each condition
+			bool match = true;
+			for (pair<string, string> condition : variantConditions.conditions) //for each condition
+			{
+				if (attributes.count(condition.first) > 0)//if it has the attribute
 				{
-					printf("%s=%s\n", condition.first.c_str(), condition.second.c_str());
-					if (attributes.count(condition.first) > 0)//if it has the attribute
+					if (attributes.at(condition.first) == condition.second) //if the attribute matches
 					{
-						printf("it has the attribute\n");
-						if (attributes.at(condition.first) == condition.second) //if the attribute matches
-						{
-							//printf("the attribute values match\n");
-							//gucci
-						}
-						else
-						{
-							match = false;
-						}
-
+						//gucci
 					}
 					else
 					{
 						match = false;
 					}
+
 				}
-				if (match)
+				else
 				{
-					printf("matches\n");
-					if (m.model == "NULL")
-					{
-						printf("first add pt 2\n");
-						m = variant.model;
-						//printf("x %i, y %i\n", variant.model.elements[0].xRot, variant.model.elements[0].yRot);
-					}
-					else
-					{
-						printf("not first add pt2\n");
-						combineModels(m, variant.model);
-					}
+					match = false;
 				}
 			}
-
-		}
-		Element e = m.elements[0];
-		//printf("size: %i\n", m.elements.size());
-		//printf("x %i, y %i\n", e.xRot, e.yRot);
-		return m;
-	}
-	else
-	{
-		Model m;
-		name = name.substr(name.find(":") + 1);
-		BlockState bs = assets[name];
-		for (Conditional variant : bs.variants) //for each variant
-		{
-			if (variant.when.size() == 0)
+			if (match)
 			{
 				if (m.model == "NULL")
 				{
@@ -190,46 +136,12 @@ Model Asset::findModelFromAssets(string name, const unordered_map<string, string
 					combineModels(m, variant.model);
 				}
 			}
-			for (Conditions variantConditions : variant.when) //for each possible set of conditions
-			{
-
-				bool match = true;
-				for (pair<string, string> condition : variantConditions.conditions) //for each condition
-				{
-					if (attributes.count(condition.first) > 0)//if it has the attribute
-					{
-						if (attributes.at(condition.first) == condition.second) //if the attribute matches
-						{
-							//gucci
-						}
-						else
-						{
-							match = false;
-						}
-
-					}
-					else
-					{
-						match = false;
-					}
-				}
-				if (match)
-				{
-					if (m.model == "NULL")
-					{
-						m = variant.model;
-					}
-					else
-					{
-						combineModels(m, variant.model);
-					}
-				}
-			}
-
 		}
-		Element e = m.elements[0];
-		return m;
+
 	}
+	Element e = m.elements[0];
+	return m;
+	
 }
 //the parses the information from the <faces> 
 
