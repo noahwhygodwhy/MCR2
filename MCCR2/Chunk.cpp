@@ -1,6 +1,7 @@
 #include "Chunk.hpp"
 #include "Renderer.hpp"
 
+
 using namespace std;
 using namespace std::filesystem;
 
@@ -22,23 +23,32 @@ Chunk::Chunk(string saveFolder, int chkx, int chkz, Asset* ass)
 {
 	this->chkx = chkx;
 	this->chkz = chkz;
-	printf("Creating chunk %i,%i\n", chkx, chkz);
+	this->ass = ass;
+	this->saveFolder = saveFolder;
+
+
+}
+
+
+
+
+void Chunk::initializeChunk()
+{
+	//printf("Creating chunk %i,%i\n", chkx, chkz);
 	CompoundTag* ct = decompress(saveFolder, chkx, chkz);
-	printf("ct is null: %s\n", ct == 0 ? "true" : "false");
+	//printf("ct is null: %s\n", ct == 0 ? "true" : "false");
 	if (ct != NULL)
 	{
-		this->initializeBuffers();
-		printf("initialized buffers");
+		//printf("%i,%i ct not null: %s\n", chkx, chkz, ct == NULL ? "false" : "true");
+		//printf("initialized buffers");
 		this->createChunk(ct, ass);
 		this->cullChunk();
 		delete(ct);
 		this->generateVertices();
-		this->bufferData();
-		this->drawable = true;
+		//printf("finished chunk %i, %i\n", chkx, chkz);
 	}
-
-
 }
+
 
 Chunk::~Chunk()
 {
@@ -123,7 +133,7 @@ void Chunk::generateVertices()
 	{
 		if (sec != NULL)
 		{
-			chrono::milliseconds start = chrono::duration_cast<chrono::milliseconds>(chrono::system_clock::now().time_since_epoch());
+			//chrono::milliseconds start = chrono::duration_cast<chrono::milliseconds>(chrono::system_clock::now().time_since_epoch());
 			for (const auto& yLevel : sec->blocks)
 			{
 				for (const auto& zSlice : yLevel)
@@ -197,9 +207,9 @@ void Chunk::generateVertices()
 				}
 			}
 
-			chrono::milliseconds end = chrono::duration_cast<chrono::milliseconds>(chrono::system_clock::now().time_since_epoch());
-			long duration = end.count() - start.count();
-			printf("that section took %lims\n", duration);
+			//chrono::milliseconds end = chrono::duration_cast<chrono::milliseconds>(chrono::system_clock::now().time_since_epoch());
+			//long duration = end.count() - start.count();
+			//printf("that section took %lims\n", duration);
 		}
 	}
 }
@@ -397,7 +407,7 @@ void Chunk::createChunk(CompoundTag* root, Asset* ass)
 
 	TagList* sections = level->getTag("Sections")->toList();
 
-	printf("There are %i sections\n", sections->getValues().size());
+	//printf("There are %i sections\n", sections->getValues().size());
 	int a = 0;
 	for (auto sec : sections->getValues())//for each section
 	{
@@ -405,7 +415,7 @@ void Chunk::createChunk(CompoundTag* root, Asset* ass)
 
 		if (section->values.count("BlockStates") > 0)//if it is a real section
 		{
-			printf("real section %i\n", a++);
+			//printf("real section %i\n", a++);
 			Section* toAdd = new Section();
 			toAdd->y = section->getTag("Y")->toTag<int8_t>()->getValue();
 			TagArray<int64_t>* blockStates = section->getTag("BlockStates")->toTagArray<int64_t>();
@@ -440,7 +450,7 @@ void Chunk::createChunk(CompoundTag* root, Asset* ass)
 
 			size_t bitWidth = blockStates->getValues().size() / 64;//number of longs/64 is how many bits each one takes
 
-			bitWidth = 4; //TODO: REMOVE
+			bitWidth = 4; //TODO: REMOVE/FIX
 
 			printf("bitWidth: %lu\n", bitWidth);
 			for (size_t y = 0; y < 16; y++)
@@ -542,7 +552,6 @@ CompoundTag* decompress(string saveFolder, int chkx, int chkz)
 //shouldn't be too hard...lol
 void Chunk::initializeBuffers()
 {
-
 	glGenVertexArrays(1, &VAO);
 	glGenBuffers(1, &VBO);
 
@@ -551,7 +560,6 @@ void Chunk::initializeBuffers()
 
 	GLsizei stride = sizeof(Vert);
 	
-
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stride, (void*)0); //position
 	glEnableVertexAttribArray(0);
 

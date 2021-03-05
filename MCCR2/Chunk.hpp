@@ -9,6 +9,7 @@
 #include <string>
 #include <array>
 #include "Asset.hpp"
+#include <thread>
 
 
 using namespace std;
@@ -35,13 +36,18 @@ public:
 	void generateVertices();
 	void unbufferData(); //idk...
 
+
+	void initializeChunk();
+
+	bool drawable;
+	int chkx;
+	int chkz;
+	Asset* ass;
+	string saveFolder;
 	
 private:
 	bool cullForThisBlock(ivec3 coord);
 	uint8_t getSides(ivec3 chkRelativeCoord);
-	bool drawable = false;
-	int chkx;
-	int chkz;
 	array<array<array<uint32_t, 80>, 4>, 4> biomes;
 	array<Section*, 20> sections;
 	vector<Vert> verts;

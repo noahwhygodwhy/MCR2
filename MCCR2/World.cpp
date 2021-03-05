@@ -16,10 +16,17 @@ World::~World()
 {
 }
 
+void initChunk(Chunk* c)
+{
+	c->initializeChunk();
+}
+
+
 //todo: I have to image this is where the parallelism would come in if I wanted to do that
 //a separate thread to load the chunk, with an indicator when it's ready to be drawn
 void World::adjustLoadedChunks()
 {
+	vector<Chunk*> chunksToGet;
 	for (int x = this->chkx - this->range; x <= this->chkx + this->range; x++)
 	{
 		for (int z = this->chkz - this->range; z <= this->chkz + this->range; z++)
@@ -28,7 +35,13 @@ void World::adjustLoadedChunks()
 			if (this->chunks.count(vec2(x, z)) == 0)
 			{
 				printf("have to load it fresh\n");
-				this->chunks.insert({ vec2(x, z), pair(true,  new Chunk(this->saveFolder, x, z, this->ass)) });
+
+				Chunk* toAdd = new Chunk(this->saveFolder, x, z, this->ass);
+				chunksToGet.push_back(toAdd);
+
+
+
+				this->chunks.insert({ vec2(x, z), pair(true,  toAdd)});
 			}
 			else
 			{
@@ -38,11 +51,36 @@ void World::adjustLoadedChunks()
 		}
 	}
 
+	vector<thread> threads;
+
+	for (Chunk* c : chunksToGet)
+	{
+		c->initializeBuffers();
+		thread th(initChunk, c);
+		threads.push_back(move(th));
+	}
+	for (int i = 0; i < threads.size(); i++)
+	{
+		threads.at(i).join();
+	}
+	for (Chunk* c : chunksToGet)
+	{
+		c->bufferData();
+		c->drawable = true;
+	}
+	
+
+
+
 	for (pair<vec2, pair<bool, Chunk*>> c : this->chunks)
 	{
 		if (abs(c.first.x) - this->chkx > 1 || abs(c.first.y) - this->chkz > 1)
 		{
 			c.second.first = false;
+		}
+		else
+		{
+			c.second.first = true;
 		}
 	}
 }
@@ -65,8 +103,9 @@ void World::draw()
 {
 	for (pair<vec2, pair<bool, Chunk*>> c : this->chunks)
 	{
-		if (c.second.first)
-		{
+		//printf("%i, %i is drawable: %s\n", c.first.x, c.first.y, c.second.second->drawable?"true":"false");
+		if (c.second.first && c.second.second->drawable)
+		{	
 			c.second.second->draw();
 		}
 	}
