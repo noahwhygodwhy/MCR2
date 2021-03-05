@@ -33,9 +33,9 @@ public:
 	void initializeBuffers();
 	void bufferData();
 	void draw();
-	void createChunk(CompoundTag* ct, Asset* ass);
-	void cullChunk();
-	void generateVertices();
+	void createChunk(CompoundTag* root, Asset* ass, array<Section*, 20>& thisSections, array<array<array<uint32_t, 80>, 4>, 4>& biomes);
+	void cullChunk(const array<Section*, 20>& sections);
+	void generateVertices(const array<Section*, 20>& sections, const array<array<array<uint32_t, 80>, 4>, 4>& biomes);
 	void cleanUp();
 	void unbufferData(); //idk...
 
@@ -49,10 +49,8 @@ public:
 	string saveFolder;
 	
 private:
-	bool cullForThisBlock(ivec3 coord);
-	uint8_t getSides(ivec3 chkRelativeCoord);
-	array<array<array<uint32_t, 80>, 4>, 4> biomes;
-	array<Section*, 20> sections;
+	bool cullForThisBlock(ivec3 coord, const array<Section*, 20>& sections);
+	uint8_t getSides(ivec3 chkRelativeCoord, const array<Section*, 20>& sections);
 	vector<Vert> verts;
 	unsigned int VBO, VAO, EBO;
 };

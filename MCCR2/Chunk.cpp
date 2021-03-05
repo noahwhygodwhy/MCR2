@@ -44,11 +44,14 @@ void Chunk::initializeChunk(World* world)
 		//printf("initialized buffers");
 
 
+		array<array<array<uint32_t, 80>, 4>, 4> biomes;
+		array<Section*, 20> sections;
 
-		this->createChunk(ct, ass);
-		this->cullChunk();
+		this->createChunk(ct, ass, sections, biomes);
+		this->cullChunk(sections);
 		delete(ct);
-		this->generateVertices();
+		this->generateVertices(sections, biomes);
+
 		world->bufferItHere(vec2(chkx, chkz));
 		//printf("finished chunk %i, %i\n", chkx, chkz);
 	}
@@ -128,7 +131,7 @@ vec3 adjust(const float& x, const float& y, const float& z)
 	return fvec3((x / 16.0f), (y / 16.0f), (z / 16.0f));
 }
 
-void Chunk::generateVertices()
+void Chunk::generateVertices(const array<Section*, 20>& sections, const array<array<array<uint32_t, 80>, 4>, 4>& biomes)
 {
 	vec3 ppp;
 	vec3 ppn;
@@ -140,7 +143,7 @@ void Chunk::generateVertices()
 	vec3 nnn;
 
 
-	for (const auto& sec : this->sections)
+	for (const auto& sec : sections)
 	{
 		if (sec != NULL)
 		{
@@ -226,7 +229,7 @@ void Chunk::generateVertices()
 }
 
 
-bool Chunk::cullForThisBlock(ivec3 coord)
+bool Chunk::cullForThisBlock(ivec3 coord, const array<Section*, 20>& sections)
 {
 	if (coord.x >= 0 && coord.x <= 15 && coord.z >= 0 && coord.z <= 15)//if it's still in the chunk
 	{
@@ -245,7 +248,7 @@ bool Chunk::cullForThisBlock(ivec3 coord)
 	return false; //nope
 }
 
-uint8_t Chunk::getSides(ivec3 chkRelativeCoord)
+uint8_t Chunk::getSides(ivec3 chkRelativeCoord, const array<Section*, 20>& sections)
 {
 
 	ivec3 top = chkRelativeCoord + ivec3(0, 1, 0);
@@ -256,31 +259,31 @@ uint8_t Chunk::getSides(ivec3 chkRelativeCoord)
 	ivec3 front = chkRelativeCoord + ivec3(0, 0, -1);
 
 	uint8_t toReturn = 0b00000000;
-	if (!cullForThisBlock(top))
+	if (!cullForThisBlock(top, sections))
 	{
 		toReturn |= 0b00100000;
 	}
-	if (!cullForThisBlock(bot))
+	if (!cullForThisBlock(bot, sections))
 	{
 		//printf("not culling bot");
 		toReturn |= 0b00010000;
 	}
-	if (!cullForThisBlock(left))
+	if (!cullForThisBlock(left, sections))
 	{
 		//printf("not culling left");
 		toReturn |= 0b00001000;
 	}
-	if (!cullForThisBlock(right))
+	if (!cullForThisBlock(right, sections))
 	{
 		//printf("not culling right");
 		toReturn |= 0b00000100;
 	}
-	if (!cullForThisBlock(back))
+	if (!cullForThisBlock(back, sections))
 	{
 		//printf("not culling back");
 		toReturn |= 0b00000010;
 	}
-	if (!cullForThisBlock(front))
+	if (!cullForThisBlock(front, sections))
 	{
 		//printf("not culling front");
 		toReturn |= 0b00000001;
@@ -290,9 +293,9 @@ uint8_t Chunk::getSides(ivec3 chkRelativeCoord)
 
 
 //sets the face byte for each block, determining which faces should be translated to triangles  
-void Chunk::cullChunk()
+void Chunk::cullChunk(const array<Section*, 20>& sections)
 {
-	for (Section* section : this->sections) //for each section in that chunk
+	for (Section* section : sections) //for each section in that chunk
 	{
 		if (section != NULL)
 		{
@@ -315,7 +318,7 @@ void Chunk::cullChunk()
 
 							//Model curr = worldChunks[{chunk.first.first, chunk.first.second}].sections.at(section.first).blocks[y][z][x]; //lol
 							//ivec3 global = ivec3(x, y, z) + ivec3(chk->x * 16, section.second->y * 16, chk->z * 16);
-							uint8_t sides = getSides(chkRelativeCoords);
+							uint8_t sides = getSides(chkRelativeCoords, sections);
 							//printf("at coords %i%, %i, %i\n", global.x, global.y, global.z);
 							//printf("sides: %c%c%c%c%c%c%c%c\n", BTB(sides));
 							if (sides > 0)
@@ -392,7 +395,7 @@ size_t getPaletteID(const vector<int64_t>& blockStates, const size_t& blockIndex
 
 
 
-void Chunk::createChunk(CompoundTag* root, Asset* ass)
+void Chunk::createChunk(CompoundTag* root, Asset* ass, array<Section*, 20>& thisSections, array<array<array<uint32_t, 80>, 4>, 4>& biomes)
 {
 	size_t initZero = 0;//IMPORTANT
 	//printf("NBT1 Parsed\n");
@@ -410,7 +413,7 @@ void Chunk::createChunk(CompoundTag* root, Asset* ass)
 			{
 				for (size_t y = 0; y < 64; y++)
 				{
-					this->biomes[y][z][x] = biomeVector[i++];
+					biomes[y][z][x] = biomeVector[i++];
 				}
 			}
 		}
@@ -478,7 +481,7 @@ void Chunk::createChunk(CompoundTag* root, Asset* ass)
 					}
 				}
 			}
-			this->sections[toAdd->y] = toAdd;
+			thisSections[toAdd->y] = toAdd;
 		}
 	}
 
