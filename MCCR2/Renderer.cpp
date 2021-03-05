@@ -88,9 +88,6 @@ void processInput(GLFWwindow* window, Camera& cam)
 Renderer::Renderer(int x, int y)
 {
 	layerCount = 0;
-	EBO = 0;
-	VBO = 0;
-	VAO = 0;
 	screenX = x;
 	screenY = y;
 	cam = Camera(vec3(0, 0, 0), vec3(0, 1, 0), 0, 0, 10, 1, 1);
@@ -340,24 +337,6 @@ void Renderer::initializeOpenGL()
 	glEnable(GL_FRAMEBUFFER_SRGB);
 	glEnable(GL_DEPTH_TEST);
 	glFrontFace(GL_CCW);
-
-	glGenVertexArrays(1, &VAO);
-	glGenBuffers(1, &VBO);
-
-	glBindVertexArray(VAO);
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-
-	GLsizei stride = sizeof(Vert);
-
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stride, (void*)0); //position
-	glEnableVertexAttribArray(0);
-
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, stride, (void*)(3 * sizeof(float))); //uv
-	glEnableVertexAttribArray(1);
-
-	glVertexAttribPointer(2, 1, GL_FLOAT, GL_FALSE, stride, (void*)(5 * sizeof(float))); //tex layer
-	glEnableVertexAttribArray(2);
-
 }
 
 
@@ -366,6 +345,7 @@ void Renderer::run(World& world)
 	glBindTexture(GL_TEXTURE_2D_ARRAY, largeTextureStack);
 	glClearColor(0.529f, 0.808f, 0.922f, 1.0f);
 
+	printf("layer count: %i\n", layerCount);
 	shader.setInt("layerCount", layerCount);
 
 	while (!glfwWindowShouldClose(window))

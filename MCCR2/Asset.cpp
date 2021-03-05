@@ -42,9 +42,10 @@ unordered_map < string, string > Asset::parseAttributes(string src)
 
 json Asset::fileToJson(string filepath)
 {
-	//printf("pasring file %s\n", filepath.c_str());
+	//printf("parsing file %s\n", filepath.c_str());
 	ifstream file(filepath);
 	json j;
+	
 	file >> j;
 	//printf("parsed\n");
 	return j;
@@ -280,7 +281,7 @@ Face Asset::parseFaceJson(const json& faces, const string& faceStr, const unorde
 	}
 	if (faces[faceStr].contains("tintindex"))
 	{
-		toReturn.tintIndex = faces[faceStr].at("tintIndex");
+		toReturn.tintIndex = faces[faceStr].at("tintindex");
 	}
 
 	string referenceName = string(faces[faceStr]["texture"]).substr(1);
@@ -312,10 +313,14 @@ Face Asset::parseFaceJson(const json& faces, const string& faceStr, const unorde
 //this includes all the parents' information
 Model Asset::parseModelJson(string name, int xRot, int yRot, int uvLock)
 {
+	//printf("parsemodeljson: %s\n", name.c_str());
 
 	unordered_map<string, string> textures;//a map of texture names for when they are references (#name)
 
 	//json modelJson = fileToJson(MODEL_DIR_PATH + name + ".json");//am i just a dumbass? this was commented out
+	
+
+
 	string parent = name;
 	size_t layer = 0;
 	bool hasParent = true;
@@ -325,6 +330,16 @@ Model Asset::parseModelJson(string name, int xRot, int yRot, int uvLock)
 	m.model = name;
 	do
 	{
+		//printf("before:%s\n", parent.c_str());
+		//printf("%s\n", parent.substr(0, 10));
+		//printf("%s\n", parent.substr(0, 10).compare(string("minecraft:"))== 0 ? "match" : "false");
+		//printf("%s\n", strcmp(parent.substr(0, 10).c_str(), string("minecraft:").c_str())==0 ? "match" : "false");
+		if (parent.substr(0, 10).compare(string("minecraft:")) == 0)
+		{
+			parent = parent.substr(10);
+		}
+		//printf("%s\n", parent.c_str());
+		//parent = parent.substr(10);//to get rid of "minecraft:"
 		modelJson = fileToJson(MODEL_DIR_PATH + parent + ".json");
 		if (parent == "block/cube" || m.model == "block/grass_block")
 		{

@@ -17,11 +17,18 @@ using namespace glm;
 
 int main(void)
 {
+
+
+	vec3 initPos = vec3(0, 128, 0);
+
+
 	Renderer r(1920, 1080);
 	r.initializeOpenGL();
 
-	Asset* ass = new Asset(r.loadTextures(TEXTURE_DIR_PATH));
-	World w(saveFolder, ass, 1);
 
-	Chunk c(saveFolder + "/region", 0, 0, ass);
+
+	Asset* ass = new Asset(r.loadTextures(TEXTURE_DIR_PATH));
+	World w(saveFolder+"/region", ass, 2, initPos.x, initPos.z);
+
+	r.run(w);
 }

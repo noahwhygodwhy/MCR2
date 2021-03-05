@@ -215,7 +215,7 @@ bool Chunk::cullForThisBlock(ivec3 coord)
 		if (sections[sec] != 0)
 		{
 			//printf("sec exists\n");
-			bool cfm = sections.at(sec)->blocks[coord.y % 16][coord.z][coord.x].cullForMe;
+			bool cfm = sections.at(sec)->blocks[coord.y % 16][coord.z][coord.x].model == "NULL" || sections.at(sec)->blocks[coord.y % 16][coord.z][coord.x].cullForMe;
 
 			//printf("cfm: %s\n", cfm ? "true" : "false");
 			return cfm;
