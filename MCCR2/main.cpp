@@ -23,12 +23,14 @@ int main(void)
 
 
 	Renderer r(1920, 1080);
+
 	r.initializeOpenGL();
 
 
 
 	Asset* ass = new Asset(r.loadTextures(TEXTURE_DIR_PATH));
-	World w(saveFolder+"/region", ass, 5, initPos.x, initPos.z);
+	World w(saveFolder + "/region", ass, 7, initPos.x, initPos.z);
 
 	r.run(w);
+	//w.close();
 }

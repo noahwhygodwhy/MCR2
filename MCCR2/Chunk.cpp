@@ -25,6 +25,7 @@ Chunk::Chunk(string saveFolder, int chkx, int chkz, Asset* ass)
 	this->chkz = chkz;
 	this->ass = ass;
 	this->saveFolder = saveFolder;
+	this->initializeBuffers();
 
 
 }
@@ -32,7 +33,7 @@ Chunk::Chunk(string saveFolder, int chkx, int chkz, Asset* ass)
 
 
 
-void Chunk::initializeChunk()
+void Chunk::initializeChunk(World* world)
 {
 	//printf("Creating chunk %i,%i\n", chkx, chkz);
 	CompoundTag* ct = decompress(saveFolder, chkx, chkz);
@@ -41,18 +42,28 @@ void Chunk::initializeChunk()
 	{
 		//printf("%i,%i ct not null: %s\n", chkx, chkz, ct == NULL ? "false" : "true");
 		//printf("initialized buffers");
+
+
+
 		this->createChunk(ct, ass);
 		this->cullChunk();
 		delete(ct);
 		this->generateVertices();
+		world->bufferItHere(vec2(chkx, chkz));
 		//printf("finished chunk %i, %i\n", chkx, chkz);
 	}
 }
 
+void Chunk::cleanUp()
+{
+
+	verts.clear();
+}
 
 Chunk::~Chunk()
 {
 }
+
 
 
 
@@ -446,13 +457,13 @@ void Chunk::createChunk(CompoundTag* root, Asset* ass)
 				}
 				toAdd->palette.push_back(ass->findModelFromAssets(name, attributes));
 			}
-			printf("blockstates: %i\n", blockStates->getValues().size());
+			//printf("blockstates: %i\n", blockStates->getValues().size());
 
 			size_t bitWidth = blockStates->getValues().size() / 64;//number of longs/64 is how many bits each one takes
 
 			bitWidth = 4; //TODO: REMOVE/FIX
 
-			printf("bitWidth: %lu\n", bitWidth);
+			//printf("bitWidth: %lu\n", bitWidth);
 			for (size_t y = 0; y < 16; y++)
 			{
 				for (size_t z = 0; z < 16; z++)
@@ -499,7 +510,7 @@ CompoundTag* decompress(string saveFolder, int chkx, int chkz)
 
 	string filePath = saveFolder + "/r." + to_string(regx) + "." + to_string(regz) + ".mca";
 	
-	printf("Save path: %s\n", filePath.c_str());
+	//printf("Save path: %s\n", filePath.c_str());
 
 	basic_ifstream<unsigned char> file;
 	try

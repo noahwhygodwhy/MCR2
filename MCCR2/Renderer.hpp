@@ -46,7 +46,7 @@ class Renderer
 public:
 	Renderer(int screenX, int screenY);
 	~Renderer();
-	void initializeOpenGL();
+	GLFWwindow* initializeOpenGL();
 	void run(World& world);
 	unordered_map<string, int> loadTextures(string path);
 	//vector<Vert> convertWorldToVerts(const vector<culledModel>& culledWorld);

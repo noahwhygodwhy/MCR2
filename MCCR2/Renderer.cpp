@@ -90,7 +90,7 @@ Renderer::Renderer(int x, int y)
 	layerCount = 0;
 	screenX = x;
 	screenY = y;
-	cam = Camera(vec3(0, 0, 0), vec3(0, 1, 0), 0, 0, 10, 1, 1);
+	cam = Camera(vec3(0, 0, 0), vec3(0, 1, 0), 0, 0, 30, 1, 1);
 	window = glfwCreateWindow(x, y, "Title Goes here", NULL, NULL);
 }
 
@@ -180,7 +180,7 @@ unordered_map<string, int> Renderer::loadTextures(string path)
 }
 
 
-void Renderer::initializeOpenGL()
+GLFWwindow* Renderer::initializeOpenGL()
 {
 	glfwInit();
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
@@ -211,6 +211,7 @@ void Renderer::initializeOpenGL()
 	glEnable(GL_FRAMEBUFFER_SRGB);
 	glEnable(GL_DEPTH_TEST);
 	glFrontFace(GL_CCW);
+	return window;
 }
 
 

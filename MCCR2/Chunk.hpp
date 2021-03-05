@@ -11,6 +11,8 @@
 #include "Asset.hpp"
 #include <thread>
 
+class World;
+
 
 using namespace std;
 using namespace std::filesystem;
@@ -34,10 +36,11 @@ public:
 	void createChunk(CompoundTag* ct, Asset* ass);
 	void cullChunk();
 	void generateVertices();
+	void cleanUp();
 	void unbufferData(); //idk...
 
 
-	void initializeChunk();
+	void initializeChunk(World* w);
 
 	bool drawable;
 	int chkx;

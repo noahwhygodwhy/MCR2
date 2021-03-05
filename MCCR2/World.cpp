@@ -1,6 +1,5 @@
 #include "World.hpp"
 
-
 World::World(string saveFolder, Asset* ass, int range, int initx, int initz)
 {
 	printf("making world with init %i,%i\n", initx, initz); 
@@ -16,9 +15,19 @@ World::~World()
 {
 }
 
-void initChunk(Chunk* c)
+
+void World::bufferItHere(ivec2 coords)
 {
-	c->initializeChunk();
+	queueLocker.lock();
+	//printf("queueing %i,%i\n", coords.x, coords.y);
+	this->bufferQueue.push(this->chunks.at(coords).second);
+	queueLocker.unlock();
+
+}
+void initChunk(Chunk* c, World* w)
+{
+	c->initializeChunk(w);
+
 }
 
 
@@ -31,44 +40,34 @@ void World::adjustLoadedChunks()
 	{
 		for (int z = this->chkz - this->range; z <= this->chkz + this->range; z++)
 		{
-			printf("world loading chunk %i,%i\n", x, z);
-			if (this->chunks.count(vec2(x, z)) == 0)
+			//printf("world loading chunk %i,%i\n", x, z);
+			if (this->chunks.count(ivec2(x, z)) == 0)
 			{
-				printf("have to load it fresh\n");
+				//printf("have to load it fresh\n");
 
 				Chunk* toAdd = new Chunk(this->saveFolder, x, z, this->ass);
 				chunksToGet.push_back(toAdd);
 
 
 
-				this->chunks.insert({ vec2(x, z), pair(true,  toAdd)});
+				this->chunks.insert({ ivec2(x, z), pair(true,  toAdd)});
 			}
 			else
 			{
-				printf("already loaded\n");
-				this->chunks[vec2(x, z)].first = true;
+				//printf("already loaded\n");
+				this->chunks[ivec2(x, z)].first = true;
 			}
 		}
 	}
 
-	vector<thread> threads;
+
+
 
 	for (Chunk* c : chunksToGet)
 	{
-		c->initializeBuffers();
-		thread th(initChunk, c);
-		threads.push_back(move(th));
+		thread th(initChunk, c, this);
+		th.detach();
 	}
-	for (int i = 0; i < threads.size(); i++)
-	{
-		threads.at(i).join();
-	}
-	for (Chunk* c : chunksToGet)
-	{
-		c->bufferData();
-		c->drawable = true;
-	}
-	
 
 
 
@@ -101,6 +100,17 @@ void World::givePos(ivec3 pos)
 
 void World::draw()
 {
+	queueLocker.lock();
+	while (!bufferQueue.empty())
+	{
+		
+		bufferQueue.front()->bufferData();
+		bufferQueue.front()->drawable = true;
+
+		//printf("buffering %i,%i\n", bufferQueue.front()->chkx, bufferQueue.front()->chkz);
+		bufferQueue.pop();
+	}
+	queueLocker.unlock();
 	for (pair<vec2, pair<bool, Chunk*>> c : this->chunks)
 	{
 		//printf("%i, %i is drawable: %s\n", c.first.x, c.first.y, c.second.second->drawable?"true":"false");
