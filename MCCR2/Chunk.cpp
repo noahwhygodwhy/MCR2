@@ -238,34 +238,34 @@ uint8_t Chunk::getSides(ivec3 chkRelativeCoord)
 	uint8_t toReturn = 0b00000000;
 	if (!cullForThisBlock(top))
 	{
-		//printf("not culling top");
-		toReturn &= 0b00100000;
+		toReturn |= 0b00100000;
 	}
 	if (!cullForThisBlock(bot))
 	{
 		//printf("not culling bot");
-		toReturn &= 0b00010000;
+		toReturn |= 0b00010000;
 	}
 	if (!cullForThisBlock(left))
 	{
 		//printf("not culling left");
-		toReturn &= 0b00001000;
+		toReturn |= 0b00001000;
 	}
 	if (!cullForThisBlock(right))
 	{
 		//printf("not culling right");
-		toReturn &= 0b00000100;
+		toReturn |= 0b00000100;
 	}
 	if (!cullForThisBlock(back))
 	{
 		//printf("not culling back");
-		toReturn &= 0b00000010;
+		toReturn |= 0b00000010;
 	}
 	if (!cullForThisBlock(front))
 	{
 		//printf("not culling front");
-		toReturn &= 0b00000001;
+		toReturn |= 0b00000001;
 	}
+	//printf("toReturn: %i\n", toReturn);
 	//printf("\n");
 	//TODO:
 	//return 0b00111111;
@@ -308,7 +308,7 @@ void Chunk::cullChunk()
 							{
 								//printf("it has sides\n");
 								//section.second->blocks[y][z][x].coords = ivec3(x, y, z) + ivec3(chk->x * 16, section.second->y * 16, chk->z * 16); //sets the coordinates in the global scale
-								section->blocks[y][z][x].faces = getSides(chkRelativeCoords);
+								section->blocks[y][z][x].faces = sides;
 							}
 							else
 							{
