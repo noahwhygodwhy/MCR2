@@ -97,137 +97,11 @@ Renderer::Renderer(int x, int y)
 Renderer::~Renderer()
 {
 }
-
-/*
-vec3 adjust(const float& x, const float& y, const float& z)
-{
-	return fvec3(( x / 16.0f), (y / 16.0f), (z / 16.0f));
-}
-*/float Renderer::normalizeTexture(const int& texID)
+float Renderer::normalizeTexture(const int& texID)
 {
 	return (float)std::max(0, std::min(layerCount - 1, (int)floor(texID + 0.5f)));
 }
 
-/*
-
-vec4 rotateAroundCenter(const mat4& rm, const vec4& b)
-{
-	return vec4(vec3(0.5f), 0.0f) + (rm * (b - vec4(vec3(0.5f), 0.0f)));
-}
-
-//vec4 rotateUV(int degrees, const vec4& b)
-//{
-//	vec4 f = b;
-//	for (int i = 0; i < degrees / 90; i++)
-//	{
-//		f = vec4(f.z, f.y, f.x, f.w);
-//	}
-//	return f;
-//}
-
-vec2 rot90(vec2 v)
-{
-	return vec2( v.y, 1.0f-v.x);
-}
-
-void OpenGL::addFace(vector<Vert>& verts, const vec3& a, const vec3& b, const vec3& c, const vec3& d, vec4 uv, int texRotation, int uvRotation, bool uvLock, int texture)
-{
-	vec2 uv00 = vec2(uv.x, uv.y) / 16.0f;
-	vec2 uv01 = vec2(uv.x, uv.w) / 16.0f;
-	vec2 uv11 = vec2(uv.z, uv.w) / 16.0f;
-	vec2 uv10 = vec2(uv.z, uv.y) / 16.0f;
-
-	if (uvLock)
-	{
-		texRotation -= uvRotation;
-	}
-
-	texRotation = ((texRotation % 360) + 360) % 360;//confines to 0 to 360
-
-	for (int i = 0; i < texRotation; i += 90)
-	{
-		uv00 = rot90(uv00);
-		uv01 = rot90(uv01);
-		uv11 = rot90(uv11);
-		uv10 = rot90(uv10);
-	}
-
-
-	Vert v00(a, uv00, texture);
-	Vert v01(b, uv01, texture);
-	Vert v11(c, uv11, texture);
-	Vert v10(d, uv10, texture);
-
-	verts.push_back(v00);
-	verts.push_back(v11);
-	verts.push_back(v10);
-
-	verts.push_back(v00);
-	verts.push_back(v01);
-	verts.push_back(v11);
-}
-
-vector<Vert> OpenGL::convertWorldToVerts(const vector<culledModel>& culledWorld)
-{
-	printf("converting to verts\n");
-
-	vec3 ppp;
-	vec3 ppn;
-	vec3 pnp;
-	vec3 pnn;
-	vec3 npp;
-	vec3 npn;
-	vec3 nnp;
-	vec3 nnn;
-
-	vector<Vert> verts;
-	for (culledModel cm: culledWorld)//for each block that might exist
-	{
-		for (Element e : cm.m.elements)//for each element of that block that might exist
-		{
-			mat4 rm = mat4(1.0f);//rm stands for rotation matrix
-			rm = rotate(rm, (float)radians((float)e.yRot), vec3(0, -1, 0));
-			rm = rotate(rm, (float)radians((float)e.xRot), vec3(-1, 0, 0));
-
-			ppp = rotateAroundCenter(rm, vec4(adjust(e.to.x, e.to.y, e.to.z), 0.0f)) + vec4(cm.coords, 0.0f);
-			ppn = rotateAroundCenter(rm, vec4(adjust(e.to.x, e.to.y, e.from.z), 0.0f)) + vec4(cm.coords, 0.0f);
-			pnp = rotateAroundCenter(rm, vec4(adjust(e.to.x, e.from.y, e.to.z), 0.0f)) + vec4(cm.coords, 0.0f);
-			pnn = rotateAroundCenter(rm, vec4(adjust(e.to.x, e.from.y, e.from.z), 0.0f)) + vec4(cm.coords, 0.0f);
-			npp = rotateAroundCenter(rm, vec4(adjust(e.from.x, e.to.y, e.to.z), 0.0f)) + vec4(cm.coords, 0.0f);
-			npn = rotateAroundCenter(rm, vec4(adjust(e.from.x, e.to.y, e.from.z), 0.0f)) + vec4(cm.coords, 0.0f);
-			nnp = rotateAroundCenter(rm, vec4(adjust(e.from.x, e.from.y, e.to.z), 0.0f)) + vec4(cm.coords, 0.0f);
-			nnn = rotateAroundCenter(rm, vec4(adjust(e.from.x, e.from.y, e.from.z), 0.0f)) + vec4(cm.coords, 0.0f);
-
-			if (cm.faces & 0b00100000 && !(e.up.cullFace & 0b11000000))//+y
-			{
-				addFace(verts, npn, npp, ppp, ppn, e.up.uv, e.up.rotation, e.yRot, e.uvLock, e.up.texture);
-			}
-			if (cm.faces & 0b00010000 && !(e.down.cullFace & 0b11000000))//-y
-			{
-				addFace(verts, nnp, nnn, pnn, pnp, e.down.uv, e.down.rotation, e.yRot, e.uvLock, e.down.texture);
-			}
-			if (cm.faces & 0b00001000 && !(e.east.cullFace & 0b11000000))//+x
-			{
-				addFace(verts, ppp, pnp, pnn, ppn, e.east.uv, e.east.rotation, e.yRot % 180 == 90 ? 0 :e.xRot, e.uvLock, e.east.texture);
-			}
-			if (cm.faces & 0b00000100 && !(e.west.cullFace & 0b11000000))//-x
-			{
-				addFace(verts, npn, nnn, nnp, npp, e.west.uv, e.west.rotation, e.yRot % 180 == 90 ? 0 : e.xRot, e.uvLock, e.west.texture);
-			}
-			if (cm.faces & 0b00000010 && !(e.south.cullFace & 0b11000000))//+z
-			{
-				addFace(verts, npp, nnp, pnp, ppp, e.south.uv, e.south.rotation, e.yRot % 180 == 0 ? 0 : e.xRot, e.uvLock, e.south.texture);
-			}
-			if (cm.faces & 0b00000001 && !(e.north.cullFace & 0b11000000))//-z
-			{
-				addFace(verts, ppn, pnn, nnn, npn, e.north.uv, e.north.rotation, e.yRot % 180 == 0 ? 0 : e.xRot, e.uvLock, e.north.texture);
-			}
-		}
-	}
-	printf("converted to verts\n");
-	return verts;
-}
-*/
 unordered_map<string, int> Renderer::loadTextures(string path)
 {
 	unordered_map<string, int> toReturn;
@@ -370,7 +244,7 @@ void Renderer::run(World& world)
 
 		world.givePos(cam.getPos());
 
-		world.draw();//TODO:
+		world.draw();
 		//glDrawArrays(GL_TRIANGLES, 0, originChunk.size());
 		//glDrawArrays(GL_TRIANGLES, 0, originChunk.size());
 

@@ -207,7 +207,6 @@ void Chunk::generateVertices()
 
 bool Chunk::cullForThisBlock(ivec3 coord)
 {
-	//return false; //TODO: 
 	if (coord.x >= 0 && coord.x <= 15 && coord.z >= 0 && coord.z <= 15)//if it's still in the chunk
 	{
 		//printf("chk exists\n");
@@ -265,17 +264,11 @@ uint8_t Chunk::getSides(ivec3 chkRelativeCoord)
 		//printf("not culling front");
 		toReturn |= 0b00000001;
 	}
-	//printf("toReturn: %i\n", toReturn);
-	//printf("\n");
-	//TODO:
-	//return 0b00111111;
-	//printf("\n\n------------------------------------\n\n");
 	return toReturn;
 }
 
 
 //sets the face byte for each block, determining which faces should be translated to triangles  
-//TODO: does not handle the removal of faces at the edge of chunks. Idek if i need to do that, will find out
 void Chunk::cullChunk()
 {
 	for (Section* section : this->sections) //for each section in that chunk

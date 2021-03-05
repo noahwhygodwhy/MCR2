@@ -33,7 +33,7 @@ public:
 	void createChunk(CompoundTag* ct, Asset* ass);
 	void cullChunk();
 	void generateVertices();
-	void unbufferData(); //idk..
+	void unbufferData(); //idk...
 
 	
 private:
