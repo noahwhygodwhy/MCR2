@@ -1,6 +1,7 @@
 #include "Chunk.hpp"
 #include "Renderer.hpp"
-
+#include "Biomes.hpp"
+#include <algorithm>
 
 using namespace std;
 using namespace std::filesystem;
@@ -44,7 +45,16 @@ void Chunk::initializeChunk(World* world)
 		//printf("initialized buffers");
 
 
-		array<array<array<uint32_t, 80>, 4>, 4> biomes;
+		array<array<array<uint32_t, 64>, 4>, 4> biomes;
+
+		for (int i = 0; i < 4; i++)
+		{
+			for (int j = 0; j < 4; j++)
+			{
+				biomes[i][j].fill(0);
+			}
+		}
+
 		array<Section*, 20> sections;
 
 		this->createChunk(ct, ass, sections, biomes);
@@ -77,12 +87,41 @@ vec4 rotateAroundCenter(const mat4& rm, const vec4& b)
 {
 	return vec4(vec3(0.5f), 0.0f) + (rm * (b - vec4(vec3(0.5f), 0.0f)));
 }
+vec3 scaleAroundCenter(float factor, vec3 b)
+{
+	return vec3(0.5f) + ((b - vec3(0.5f))*factor);
+}
 
 //TODO: this is what sets up the UVs, so when it's wrong, this is to blame
-void addFace(vector<Vert>& verts, const vec3& a, const vec3& b, const vec3& c, const vec3& d, vec4 uv, int texRotation, int uvRotation, bool uvLock, int texture)
+void addFace(vector<Vert>& verts, const vec3& ax, const vec3& bx, const vec3& cx, const vec3& dx, vec4 uv, int texRotation, int uvRotation, bool uvLock, int texture, int tintIndex, vec2 tintUV, const vec3& blockCoords)
 {
 	
-	
+	vec3 a = ax;
+	vec3 b = bx;
+	vec3 c = cx;
+	vec3 d = dx;
+
+	tintUV = vec2(0.2f, 0.2f);
+	if (tintIndex == -1)
+	{
+		//printf("setting tintUV to -1\n");
+		tintUV = vec2(-1.0f, -1.0f);
+	}
+	else //TODO:
+	{
+		float scaleFactor = 1.10001f;
+		//printf("tint index is %i\n", tintIndex);
+		a = scaleAroundCenter(scaleFactor, a);
+		b= scaleAroundCenter(scaleFactor, b);
+		c = scaleAroundCenter(scaleFactor, c);
+		d = scaleAroundCenter(scaleFactor, d);
+	}
+
+	a += blockCoords;
+	b += blockCoords;
+	c += blockCoords;
+	d += blockCoords;
+
 
 	vec2 uv00 = vec2(uv.x, uv.y) / 16.0f;
 	vec2 uv01 = vec2(uv.x, uv.w) / 16.0f;
@@ -112,10 +151,10 @@ void addFace(vector<Vert>& verts, const vec3& a, const vec3& b, const vec3& c, c
 	}*/
 
 
-	Vert v00(a, uv00, texture);
-	Vert v01(b, uv01, texture);
-	Vert v11(c, uv11, texture);
-	Vert v10(d, uv10, texture);
+	Vert v00(a, uv00, tintUV, texture);
+	Vert v01(b, uv01, tintUV, texture);
+	Vert v11(c, uv11, tintUV, texture);
+	Vert v10(d, uv10, tintUV, texture);
 
 	verts.push_back(v00);
 	verts.push_back(v11);
@@ -134,7 +173,34 @@ vec3 adjust(const float& x, const float& y, const float& z)
 	return fvec3((x / 16.0f), (y / 16.0f), (z / 16.0f));
 }
 
-void Chunk::generateVertices(const array<Section*, 20>& sections, const array<array<array<uint32_t, 80>, 4>, 4>& biomes)
+
+vec2 Chunk::getBiomeAttrs(const array<array<array<uint32_t, 64>, 4>, 4>& biomes, ivec3 coords)
+{
+	try
+	{
+		//printf("about to get biome data\n");
+		uint32_t biomeID = biomes[(coords.z % 16) / 4][(coords.x % 16) / 4][coords.y / 4];
+		//printf("biome id = %u\n", biomeID);
+		if (biomeID > 255)
+		{
+			biomeID = 0; //TODO: fix
+		}
+		Biome b = biomeData[biomeID];
+		//printf("got biome data for %s\n", b.name.c_str());
+		float temp = std::clamp(b.temp, 0.0f, 1.0f);
+		temp -= (coords.y - SEA_LEVEL) * TEMP_LOSS_PER_METER;
+		float rain = std::clamp(b.rain, 0.0f, 1.0f) * temp;
+		return vec2(temp, rain);
+	}
+	catch (exception e)//TODO:
+	{
+
+		return vec2(0.2f, 0.2f);
+	}
+
+}
+
+void Chunk::generateVertices(const array<Section*, 20>& sections, const array<array<array<uint32_t, 64>, 4>, 4>& biomes)
 {
 	vec3 ppp;
 	vec3 ppn;
@@ -167,17 +233,17 @@ void Chunk::generateVertices(const array<Section*, 20>& sections, const array<ar
 
 								mat4 rm = mat4(1.0f);//rm stands for rotation matrix
 
-								rm = rotate(rm, (float)radians((float)e.yRot), vec3(0, -1, 0));
+								rm = rotate(rm, (float)radians((float)e.yRot), vec3(0, 1, 0));
 								rm = rotate(rm, (float)radians((float)e.xRot), vec3(-1, 0, 0));
 
-								ppp = rotateAroundCenter(rm, vec4(adjust(e.to.x, e.to.y, e.to.z), 0.0f)) + vec4(block.coords, 0.0f);
-								ppn = rotateAroundCenter(rm, vec4(adjust(e.to.x, e.to.y, e.from.z), 0.0f)) + vec4(block.coords, 0.0f);
-								pnp = rotateAroundCenter(rm, vec4(adjust(e.to.x, e.from.y, e.to.z), 0.0f)) + vec4(block.coords, 0.0f);
-								pnn = rotateAroundCenter(rm, vec4(adjust(e.to.x, e.from.y, e.from.z), 0.0f)) + vec4(block.coords, 0.0f);
-								npp = rotateAroundCenter(rm, vec4(adjust(e.from.x, e.to.y, e.to.z), 0.0f)) + vec4(block.coords, 0.0f);
-								npn = rotateAroundCenter(rm, vec4(adjust(e.from.x, e.to.y, e.from.z), 0.0f)) + vec4(block.coords, 0.0f);
-								nnp = rotateAroundCenter(rm, vec4(adjust(e.from.x, e.from.y, e.to.z), 0.0f)) + vec4(block.coords, 0.0f);
-								nnn = rotateAroundCenter(rm, vec4(adjust(e.from.x, e.from.y, e.from.z), 0.0f)) + vec4(block.coords, 0.0f);
+								ppp = rotateAroundCenter(rm, vec4(adjust(e.to.x, e.to.y, e.to.z), 0.0f));
+								ppn = rotateAroundCenter(rm, vec4(adjust(e.to.x, e.to.y, e.from.z), 0.0f));
+								pnp = rotateAroundCenter(rm, vec4(adjust(e.to.x, e.from.y, e.to.z), 0.0f));
+								pnn = rotateAroundCenter(rm, vec4(adjust(e.to.x, e.from.y, e.from.z), 0.0f));
+								npp = rotateAroundCenter(rm, vec4(adjust(e.from.x, e.to.y, e.to.z), 0.0f));
+								npn = rotateAroundCenter(rm, vec4(adjust(e.from.x, e.to.y, e.from.z), 0.0f));
+								nnp = rotateAroundCenter(rm, vec4(adjust(e.from.x, e.from.y, e.to.z), 0.0f));
+								nnn = rotateAroundCenter(rm, vec4(adjust(e.from.x, e.from.y, e.from.z), 0.0f));
 
 								
 
@@ -187,36 +253,42 @@ void Chunk::generateVertices(const array<Section*, 20>& sections, const array<ar
 								//printf("block coord in verticizing: %i, %i, %i\n", block.coords.x, block.coords.y, block.coords.z);
 								//printf("ppp: %f, %f, %f\n", ppp.x, ppp.y, ppp.z);
 								//printf("nnn %f, %f, %f\n", nnn.x, nnn.y, nnn.z);
+								//printf("bout to crash\n");
+								//vec2 tintUV = vec2(0.1, 0.1);
+								vec2 tintUV = getBiomeAttrs(biomes, block.coords);
+								//printf("didn't crash\n");
+
+								
 
 								if (block.faces & 0b00100000 && !(e.up.cullFace & 0b11000000))//+y
 								{
 									//printf("adding top\n");
-									addFace(this->verts, npn, npp, ppp, ppn, e.up.uv, e.up.rotation, e.yRot, e.uvLock, e.up.texture);
+									addFace(this->verts, npn, npp, ppp, ppn, e.up.uv, e.up.rotation, e.yRot, e.uvLock, e.up.texture, e.up.tintIndex, tintUV, block.coords);
 								}
 								if (block.faces & 0b00010000 && !(e.down.cullFace & 0b11000000))//-y
 								{
 									//printf("adding bot\n");
-									addFace(this->verts, nnp, nnn, pnn, pnp, e.down.uv, e.down.rotation, e.yRot, e.uvLock, e.down.texture);
+									addFace(this->verts, nnp, nnn, pnn, pnp, e.down.uv, e.down.rotation, e.yRot, e.uvLock, e.down.texture, e.down.tintIndex, tintUV, block.coords);
 								}
 								if (block.faces & 0b00001000 && !(e.east.cullFace & 0b11000000))//+x
 								{
 									//printf("adding west\n");
-									addFace(this->verts, ppp, pnp, pnn, ppn, e.east.uv, e.east.rotation, e.yRot % 180 == 90 ? 0 : e.xRot, e.uvLock, e.east.texture);
+									addFace(this->verts, ppp, pnp, pnn, ppn, e.east.uv, e.east.rotation, e.yRot % 180 == 90 ? 0 : e.xRot, e.uvLock, e.east.texture, e.east.tintIndex, tintUV, block.coords);
 								}
 								if (block.faces & 0b00000100 && !(e.west.cullFace & 0b11000000))//-x
 								{
 									//printf("adding east\n");
-									addFace(this->verts, npn, nnn, nnp, npp, e.west.uv, e.west.rotation, e.yRot % 180 == 90 ? 0 : e.xRot, e.uvLock, e.west.texture);
+									addFace(this->verts, npn, nnn, nnp, npp, e.west.uv, e.west.rotation, e.yRot % 180 == 90 ? 0 : e.xRot, e.uvLock, e.west.texture, e.west.tintIndex, tintUV, block.coords);
 								}
 								if (block.faces & 0b00000010 && !(e.south.cullFace & 0b11000000))//+z
 								{
 									//printf("adding south\n");
-									addFace(this->verts, npp, nnp, pnp, ppp, e.south.uv, e.south.rotation, e.yRot % 180 == 0 ? 0 : e.xRot, e.uvLock, e.south.texture);
+									addFace(this->verts, npp, nnp, pnp, ppp, e.south.uv, e.south.rotation, e.yRot % 180 == 0 ? 0 : e.xRot, e.uvLock, e.south.texture, e.south.tintIndex, tintUV, block.coords);
 								}
 								if (block.faces & 0b00000001 && !(e.north.cullFace & 0b11000000))//-z
 								{
 									//printf("adding north\n");
-									addFace(this->verts, ppn, pnn, nnn, npn, e.north.uv, e.north.rotation, e.yRot % 180 == 0 ? 0 : e.xRot, e.uvLock, e.north.texture);
+									addFace(this->verts, ppn, pnn, nnn, npn, e.north.uv, e.north.rotation, e.yRot % 180 == 0 ? 0 : e.xRot, e.uvLock, e.north.texture, e.north.tintIndex, tintUV, block.coords);
 								}
 							}
 						}
@@ -234,14 +306,15 @@ void Chunk::generateVertices(const array<Section*, 20>& sections, const array<ar
 
 bool Chunk::cullForThisBlock(ivec3 coord, const array<Section*, 20>& sections)
 {
-	if (coord.x >= 0 && coord.x <= 15 && coord.z >= 0 && coord.z <= 15)//if it's still in the chunk
+	if (coord.x >= 0 && coord.x <= 15 && coord.z >= 0 && coord.z <= 15 && coord.y >= 0)//if it's still in the chunk
 	{
 		//printf("chk exists\n");
 		int sec = coord.y >> 4;
-		if (sections[sec] != 0)
+		if (sections[sec] != NULL)
 		{
 			//printf("sec exists\n");
-			bool cfm = sections.at(sec)->blocks[coord.y % 16][coord.z][coord.x].cullForMe;
+			//printf("accesing %i, %i, %i\n", coord.y % 16, coord.z, coord.x);
+			bool cfm = sections[sec]->blocks[coord.y % 16][coord.z][coord.x].cullForMe;
 
 			//printf("cfm: %s\n", cfm ? "true" : "false");
 			return cfm;
@@ -298,8 +371,9 @@ uint8_t Chunk::getSides(ivec3 chkRelativeCoord, const array<Section*, 20>& secti
 //sets the face byte for each block, determining which faces should be translated to triangles  
 void Chunk::cullChunk(const array<Section*, 20>& sections)
 {
-	for (Section* section : sections) //for each section in that chunk
+	for (int s = 0; s < sections.size(); s++)
 	{
+		Section* section = sections[s];
 		if (section != NULL)
 		{
 			for (int y = 0; y < 16; y++) //for each y latyer
@@ -308,7 +382,16 @@ void Chunk::cullChunk(const array<Section*, 20>& sections)
 				{
 					for (int z = 0; z < 16; z++)
 					{
+						if (section->y > 4)
+						{
+							printf("there are %i sections", sections.size());
+							printf("index of %i\n", s);
+							printf("accessing %i,%i,%i\n", y, z, x);
+							printf("section %i\n", section->y);
+							printf("section %s\n", section->blocks[y][z][x].model.c_str());
+						}
 						string name = section->blocks[y][z][x].model;
+						//printf("name: %s\n", name.c_str());
 						if (name == "block/air" || name == "block/void_air" || name == "block/cave_air")
 						{
 							section->blocks[y][z][x].model = "NULL";
@@ -398,7 +481,7 @@ size_t getPaletteID(const vector<int64_t>& blockStates, const size_t& blockIndex
 
 
 
-void Chunk::createChunk(CompoundTag* root, Asset* ass, array<Section*, 20>& thisSections, array<array<array<uint32_t, 80>, 4>, 4>& biomes)
+void Chunk::createChunk(CompoundTag* root, Asset* ass, array<Section*, 20>& thisSections, array<array<array<uint32_t, 64>, 4>, 4>& biomes)
 {
 	size_t initZero = 0;//IMPORTANT
 	//printf("NBT1 Parsed\n");
@@ -406,17 +489,41 @@ void Chunk::createChunk(CompoundTag* root, Asset* ass, array<Section*, 20>& this
 
 
 	//read in biome information
-	if (level->getValues().count("Biomes") > 1)
+	
+
+
+
+	if (level->getValues().count("Biomes") > 0)
 	{
+		printf("it has biomes\n");
 		vector<int32_t> biomeVector = level->getTag("Biomes")->toTagArray<int32_t>()->getValues();
 		size_t i = 0;
-		for (size_t z = 0; z < 16; z++)
+		for (size_t z = 0; z < 4; z++)
 		{
-			for (size_t x = 0; x < 16; x++)
+			for (size_t x = 0; x < 4; x++)
 			{
 				for (size_t y = 0; y < 64; y++)
 				{
-					biomes[y][z][x] = biomeVector[i++];
+					if (biomeVector[i] > 255)
+					{
+						printf("x,y,z %i,%i,%i is biome %i\n", x, y, z, biomeVector[i]);
+					}
+					biomes[z][x][y] = biomeVector[i++];
+				}
+			}
+		}
+	}
+	else
+	{
+		printf("biomes does not exist\n");
+		size_t i = 0;
+		for (size_t z = 0; z < 4; z++)
+		{
+			for (size_t x = 0; x < 4; x++)
+			{
+				for (size_t y = 0; y < 64; y++)
+				{
+					biomes[z][x][y] = 0;
 				}
 			}
 		}
@@ -424,7 +531,8 @@ void Chunk::createChunk(CompoundTag* root, Asset* ass, array<Section*, 20>& this
 
 	TagList* sections = level->getTag("Sections")->toList();
 
-	//printf("There are %i sections\n", sections->getValues().size());
+	thisSections.fill(0);
+	printf("There are %i sections\n", sections->getValues().size());
 	int a = 0;
 	for (auto sec : sections->getValues())//for each section
 	{
@@ -432,9 +540,10 @@ void Chunk::createChunk(CompoundTag* root, Asset* ass, array<Section*, 20>& this
 
 		if (section->values.count("BlockStates") > 0)//if it is a real section
 		{
-			//printf("real section %i\n", a++);
+			printf("real section %i\n", a++);
 			Section* toAdd = new Section();
 			toAdd->y = section->getTag("Y")->toTag<int8_t>()->getValue();
+			printf("y is %i\n", section->getTag("Y")->toTag<int8_t>()->getValue());
 			TagArray<int64_t>* blockStates = section->getTag("BlockStates")->toTagArray<int64_t>();
 			TagList* p = section->getTag("Palette")->toList();
 
@@ -484,9 +593,15 @@ void Chunk::createChunk(CompoundTag* root, Asset* ass, array<Section*, 20>& this
 					}
 				}
 			}
+			//printf("adding section at y %i\n", toAdd -> y);
 			thisSections[toAdd->y] = toAdd;
 		}
 	}
+
+	/*for (int i = 0; i < thisSections.size(); i++)
+	{
+		printf("section %i is null: %s\n", i, thisSections[i] == NULL ? "true" : "false");
+	}*/
 
 
 }
@@ -583,8 +698,11 @@ void Chunk::initializeBuffers()
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, stride, (void*)(3 * sizeof(float))); //uv
 	glEnableVertexAttribArray(1);
 
-	glVertexAttribPointer(2, 1, GL_FLOAT, GL_FALSE, stride, (void*)(5 * sizeof(float))); //tex layer
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, stride, (void*)(5 * sizeof(float))); //tint uv
 	glEnableVertexAttribArray(2);
+
+	glVertexAttribPointer(3, 1, GL_FLOAT, GL_FALSE, stride, (void*)(7 * sizeof(float))); //tex layer
+	glEnableVertexAttribArray(3);
 }
 
 void Chunk::bufferData()

@@ -9,7 +9,8 @@
 #include "Asset.hpp"
 
 
-string saveFolder = "D:/OneDrive/Personal/MCCR2/New World";
+//string saveFolder = "D:/OneDrive/Personal/MCCR2/New World";
+string saveFolder = "C:/Users/noahm/AppData/Roaming/.minecraft/saves/New World2";
 
 using namespace std;
 using namespace glm;
@@ -29,7 +30,7 @@ int main(void)
 
 
 	Asset* ass = new Asset(r.loadTextures(TEXTURE_DIR_PATH));
-	World w(saveFolder + "/region", ass, 7, initPos.x, initPos.z);
+	World w(saveFolder + "/region", ass, 0, initPos.x, initPos.z);
 
 	r.run(w);
 	//w.close();

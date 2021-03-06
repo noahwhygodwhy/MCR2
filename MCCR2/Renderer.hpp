@@ -37,12 +37,14 @@ struct VertToBeRendered
 class Renderer
 {
 	unsigned int largeTextureStack = 0;
+	unsigned int foliageColorMap = 0;
 	int screenX;
 	int screenY;
 	Camera cam;
 	Shader shader;
 	GLFWwindow* window;
 	int32_t layerCount;
+
 public:
 	Renderer(int screenX, int screenY);
 	~Renderer();

@@ -62,11 +62,12 @@ void World::adjustLoadedChunks()
 
 
 
-
+	//TODO: reenable threading
 	for (Chunk* c : chunksToGet)
 	{
-		thread th(initChunk, c, this);
-		th.detach();
+		initChunk(c, this);
+		//thread th(initChunk, c, this);
+		//th.detach();
 	}
 
 

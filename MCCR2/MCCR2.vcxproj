@@ -164,6 +164,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Asset.hpp" />
+    <ClInclude Include="Biomes.hpp" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Chunk.hpp" />
     <ClInclude Include="DirectionEnum.h" />

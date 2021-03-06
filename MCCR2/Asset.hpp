@@ -25,11 +25,13 @@ struct Vert
 
 	fvec3 coord;
 	fvec2 uv;
+	fvec2 tintUV;
 	float texIndex;
-	Vert(vec3 c, vec2 u, float t)
+	Vert(vec3 c, vec2 u, vec2 u2, float t)
 	{
 		coord = c;
 		uv = u;
+		tintUV = u2;
 		texIndex = t;
 	}
 };
@@ -66,7 +68,7 @@ struct Element
 	ivec3 from = ivec3(0, 0, 0);
 	ivec3 to = ivec3(16, 16, 16);
 
-	ivec3 tint = ivec3(0, 0, 0);
+	//ivec3 tint = ivec3(0, 0, 0);
 	int xRot = 0;
 	int yRot = 0;
 	bool uvLock = false;

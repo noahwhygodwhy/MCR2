@@ -47,10 +47,10 @@ void Camera::keyboardInput(Direction dir, float time)
 		position += -up * vel;
 		break;
 	case Direction::YAW_LEFT:
-		yaw += -vel * 3;
+		yaw += -1;
 		break;
 	case Direction::YAW_RIGHT:
-		yaw += vel * 3;
+		yaw += 1;
 		break;
 	default:
 		//this block intentionally left blank

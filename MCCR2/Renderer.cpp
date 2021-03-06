@@ -90,7 +90,7 @@ Renderer::Renderer(int x, int y)
 	layerCount = 0;
 	screenX = x;
 	screenY = y;
-	cam = Camera(vec3(0, 0, 0), vec3(0, 1, 0), 0, 0, 30, 1, 1);
+	cam = Camera(vec3(0, 0, 0), vec3(0, 1, 0), 0, 0, 5, 1, 1);
 	window = glfwCreateWindow(x, y, "Title Goes here", NULL, NULL);
 }
 
@@ -102,8 +102,50 @@ float Renderer::normalizeTexture(const int& texID)
 	return (float)std::max(0, std::min(layerCount - 1, (int)floor(texID + 0.5f)));
 }
 
+
+
+
+
+
+
+
+
 unordered_map<string, int> Renderer::loadTextures(string path)
 {
+	printf("starting to load textures\n");
+	fflush(stdout);
+	glGenTextures(1, &(this->foliageColorMap));
+	glBindTexture(GL_TEXTURE_2D, this->foliageColorMap);
+	glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+	glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+	glTexStorage2D(GL_TEXTURE_2D_ARRAY, 1, GL_SRGB8_ALPHA8, 256, 256);
+	int width, height, channels;
+
+	unsigned char* data = stbi_load((path+string("colormap/foliage.png")).c_str(), &width, &height, &channels, 4);
+
+	//printf("it has %i channels\n", channels);
+	if (data == NULL)
+	{
+		fprintf(stderr, "image not loaded\n");
+		fprintf(stderr, "%s\n", (path + string("colormap/foliage.png")).c_str());
+		exit(-1);
+	}
+
+	printf("width: %i, height: %i, channels: %i\n", width, height, channels);
+	printf("data: %p\n", data);
+
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+	printf("foliage color map is null: %s\n", foliageColorMap == 0 ? "true" : "false");
+
+	stbi_image_free(data);
+
+	printf("foliage image loaded\n");
+
+
 	unordered_map<string, int> toReturn;
 	directory_iterator textureDir(path + "block/");
 	vector<pair<string, unsigned char*>> sixteenImages;
@@ -146,33 +188,31 @@ unordered_map<string, int> Renderer::loadTextures(string path)
 
 	printf("all images in sixteenImages\n");
 	int32_t mipLevelCount = 1;//maybe eventually fix?
-	int32_t width = 16;
-	int32_t height = 16;
+	width = 16;
+	height = 16;
 	layerCount = sixteenImages.size();
 
 	printf("layerCount: %i\n", layerCount);
 
 
+
 	glGenTextures(1, &(this->largeTextureStack));
 	glBindTexture(GL_TEXTURE_2D_ARRAY, this->largeTextureStack);
 
-	glTexStorage3D(GL_TEXTURE_2D_ARRAY, mipLevelCount, GL_SRGB8_ALPHA8, width, height, layerCount);
-
-	for (int32_t i = 0; i < sixteenImages.size(); i++)
-	{
-		if (i == 440)
-		{
-			printf("440 iS ########### %s\n", sixteenImages[i].first.c_str());
-		}
-		glTexSubImage3D(GL_TEXTURE_2D_ARRAY, 0, 0, 0, i, width, height, 1, GL_RGBA, GL_UNSIGNED_BYTE, sixteenImages[i].second);
-		toReturn[sixteenImages[i].first] = i;
-		stbi_image_free(sixteenImages[i].second);//todo hopefully this doesn't break shit.
-	}
 	glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
 	glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+	glTexStorage3D(GL_TEXTURE_2D_ARRAY, mipLevelCount, GL_SRGB8_ALPHA8, width, height, layerCount);
+
+	for (int32_t i = 0; i < sixteenImages.size(); i++)
+	{
+		glTexSubImage3D(GL_TEXTURE_2D_ARRAY, 0, 0, 0, i, width, height, 1, GL_RGBA, GL_UNSIGNED_BYTE, sixteenImages[i].second);
+		toReturn[sixteenImages[i].first] = i;
+		stbi_image_free(sixteenImages[i].second);//todo hopefully this doesn't break shit.
+	}
 
 	printf("all textures loaded into the largeTextureStack\n");
 
@@ -217,7 +257,13 @@ GLFWwindow* Renderer::initializeOpenGL()
 
 void Renderer::run(World& world)
 {
+	glBindTexture(GL_TEXTURE_2D, foliageColorMap);
+	printf("#######foliage color map is null: %s\n", foliageColorMap == 0 ? "true" : "false");
 	glBindTexture(GL_TEXTURE_2D_ARRAY, largeTextureStack);
+	//glActiveTexture(GL_TEXTURE0);
+	//glActiveTexture(GL_TEXTURE1);
+
+
 	glClearColor(0.529f, 0.808f, 0.922f, 1.0f);
 
 	printf("layer count: %i\n", layerCount);
