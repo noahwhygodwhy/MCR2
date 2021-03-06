@@ -2,6 +2,7 @@
 #include "Renderer.hpp"
 #include "Biomes.hpp"
 #include <algorithm>
+#include "glm/ext.hpp" 
 
 using namespace std;
 using namespace std::filesystem;
@@ -109,7 +110,7 @@ void addFace(vector<Vert>& verts, const vec3& ax, const vec3& bx, const vec3& cx
 	}
 	else //TODO:
 	{
-		float scaleFactor = 1.10001f;
+		float scaleFactor = 1.005f;
 		//printf("tint index is %i\n", tintIndex);
 		a = scaleAroundCenter(scaleFactor, a);
 		b= scaleAroundCenter(scaleFactor, b);
@@ -168,6 +169,11 @@ void addFace(vector<Vert>& verts, const vec3& ax, const vec3& bx, const vec3& cx
 
 
 
+ivec3 adjust(fvec3 in)
+{
+	return ivec3(in / 16.0f);
+}
+
 vec3 adjust(const float& x, const float& y, const float& z)
 {
 	return fvec3((x / 16.0f), (y / 16.0f), (z / 16.0f));
@@ -200,6 +206,54 @@ vec2 Chunk::getBiomeAttrs(const array<array<array<uint32_t, 64>, 4>, 4>& biomes,
 
 }
 
+fvec3 performRotations(int xRot, int yRot, ivec3 given)
+{
+	fvec3 in = fvec3(given) - fvec3(0.5f);
+	//in -= vec3(0.5f);
+	//printf("in: %f, %f, %f\n", in.x, in.y, in.z);
+	fvec3 out = in;
+	
+	switch (xRot)
+	{
+	case 90:
+		//printf("90 x rot\n");
+		out = vec3(out.x, -out.y, out.z);
+		break;
+	case 180:
+		out = vec3(out.x, -out.y, -out.z);
+		break;
+	case 270:
+		out = vec3(out.x, out.z, -out.y);
+		break;
+	default:
+		//printf("no x rot\n");
+		//out = in;
+		break;
+	}
+
+	switch (yRot)
+	{
+	case 90:
+		//printf("90 y rot\n");
+		out = vec3(-out.z, out.y, out.x);
+		break;
+	case 180:
+		out = vec3(-out.x, out.y, -out.z);
+		break;
+	case 270:
+		out = vec3(out.z, out.y, -out.x);
+		break;
+	default:
+		//printf("no y rot\n");
+		//out = in;
+		break;
+	}
+	//("out: %f, %f, %f\n", out.x, out.y, out.z);
+	out += fvec3(0.5f);
+	return out;
+}
+
+
 void Chunk::generateVertices(const array<Section*, 20>& sections, const array<array<array<uint32_t, 64>, 4>, 4>& biomes)
 {
 	vec3 ppp;
@@ -230,8 +284,45 @@ void Chunk::generateVertices(const array<Section*, 20>& sections, const array<ar
 							{
 
 								//printf("model is from %i,%i,%i to %i,%i,%i\n", e.from.x, e.from.y, e.from.z, e.to.x, e.to.y, e.to.z);
+								
+								printf("xrot: %i, yrot: %i\n", e.xRot, e.yRot);
 
-								mat4 rm = mat4(1.0f);//rm stands for rotation matrix
+								//printf("to: %i, %i, %i\n", e.to.x, e.to.y, e.to.z);
+								//printf("from: %i, %i %i\n", e.from.x, e.from.y, e.from.z);
+
+								ivec3 adjTo = adjust(e.to);
+								ivec3 adjFrom = adjust(e.from);
+
+								//printf("to: %i, %i, %i\n", adjTo.x, adjTo.y, adjTo.z);
+								//printf("from: %i, %i %i\n", adjFrom.x, adjFrom.y, adjFrom.z);
+
+								//int eyRot = 270;
+
+								//adjTo = performRotations(e.xRot, eyRot, adjTo);
+								//adjFrom = performRotations(e.xRot, eyRot, adjFrom);
+
+								//printf("to: %i, %i, %i\n", adjTo.x, adjTo.y, adjTo.z);
+								//printf("from: %i, %i %i\n", adjFrom.x, adjFrom.y, adjFrom.z);
+
+								ppp = performRotations(e.xRot, e.yRot, vec3(adjTo.x, adjTo.y, adjTo.z));
+								ppn = performRotations(e.xRot, e.yRot, vec3(adjTo.x, adjTo.y, adjFrom.z));
+								pnp = performRotations(e.xRot, e.yRot, vec3(adjTo.x, adjFrom.y, adjTo.z));
+								pnn = performRotations(e.xRot, e.yRot, vec3(adjTo.x, adjFrom.y, adjFrom.z));
+								npp = performRotations(e.xRot, e.yRot, vec3(adjFrom.x, adjTo.y, adjTo.z));
+								npn = performRotations(e.xRot, e.yRot, vec3(adjFrom.x, adjTo.y, adjFrom.z));
+								nnp = performRotations(e.xRot, e.yRot, vec3(adjFrom.x, adjFrom.y, adjTo.z));
+								nnn = performRotations(e.xRot, e.yRot, vec3(adjFrom.x, adjFrom.y, adjFrom.z));
+
+								/*ppp = vec3(adjTo.x, adjTo.y, adjTo.z);
+								ppn = vec3(adjTo.x, adjTo.y, adjFrom.z);
+								pnp = vec3(adjTo.x, adjFrom.y, adjTo.z);
+								pnn = vec3(adjTo.x, adjFrom.y, adjFrom.z);
+								npp = vec3(adjFrom.x, adjTo.y, adjTo.z);
+								npn = vec3(adjFrom.x, adjTo.y, adjFrom.z);
+								nnp = vec3(adjFrom.x, adjFrom.y, adjTo.z);
+								nnn = vec3(adjFrom.x, adjFrom.y, adjFrom.z);*/
+
+								/*mat4 rm = mat4(1.0f);//rm stands for rotation matrix
 
 								rm = rotate(rm, (float)radians((float)e.yRot), vec3(0, 1, 0));
 								rm = rotate(rm, (float)radians((float)e.xRot), vec3(-1, 0, 0));
@@ -243,7 +334,7 @@ void Chunk::generateVertices(const array<Section*, 20>& sections, const array<ar
 								npp = rotateAroundCenter(rm, vec4(adjust(e.from.x, e.to.y, e.to.z), 0.0f));
 								npn = rotateAroundCenter(rm, vec4(adjust(e.from.x, e.to.y, e.from.z), 0.0f));
 								nnp = rotateAroundCenter(rm, vec4(adjust(e.from.x, e.from.y, e.to.z), 0.0f));
-								nnn = rotateAroundCenter(rm, vec4(adjust(e.from.x, e.from.y, e.from.z), 0.0f));
+								nnn = rotateAroundCenter(rm, vec4(adjust(e.from.x, e.from.y, e.from.z), 0.0f));*/
 
 								
 
@@ -384,11 +475,11 @@ void Chunk::cullChunk(const array<Section*, 20>& sections)
 					{
 						if (section->y > 4)
 						{
-							printf("there are %i sections", sections.size());
-							printf("index of %i\n", s);
-							printf("accessing %i,%i,%i\n", y, z, x);
-							printf("section %i\n", section->y);
-							printf("section %s\n", section->blocks[y][z][x].model.c_str());
+							//printf("there are %i sections", sections.size());
+							//printf("index of %i\n", s);
+							//printf("accessing %i,%i,%i\n", y, z, x);
+							//printf("section %i\n", section->y);
+							//printf("section %s\n", section->blocks[y][z][x].model.c_str());
 						}
 						string name = section->blocks[y][z][x].model;
 						//printf("name: %s\n", name.c_str());
@@ -495,7 +586,7 @@ void Chunk::createChunk(CompoundTag* root, Asset* ass, array<Section*, 20>& this
 
 	if (level->getValues().count("Biomes") > 0)
 	{
-		printf("it has biomes\n");
+		//printf("it has biomes\n");
 		vector<int32_t> biomeVector = level->getTag("Biomes")->toTagArray<int32_t>()->getValues();
 		size_t i = 0;
 		for (size_t z = 0; z < 4; z++)
@@ -515,7 +606,7 @@ void Chunk::createChunk(CompoundTag* root, Asset* ass, array<Section*, 20>& this
 	}
 	else
 	{
-		printf("biomes does not exist\n");
+		//printf("biomes does not exist\n");
 		size_t i = 0;
 		for (size_t z = 0; z < 4; z++)
 		{
@@ -532,7 +623,7 @@ void Chunk::createChunk(CompoundTag* root, Asset* ass, array<Section*, 20>& this
 	TagList* sections = level->getTag("Sections")->toList();
 
 	thisSections.fill(0);
-	printf("There are %i sections\n", sections->getValues().size());
+	//printf("There are %i sections\n", sections->getValues().size());
 	int a = 0;
 	for (auto sec : sections->getValues())//for each section
 	{
@@ -540,10 +631,10 @@ void Chunk::createChunk(CompoundTag* root, Asset* ass, array<Section*, 20>& this
 
 		if (section->values.count("BlockStates") > 0)//if it is a real section
 		{
-			printf("real section %i\n", a++);
+			//printf("real section %i\n", a++);
 			Section* toAdd = new Section();
 			toAdd->y = section->getTag("Y")->toTag<int8_t>()->getValue();
-			printf("y is %i\n", section->getTag("Y")->toTag<int8_t>()->getValue());
+			//printf("y is %i\n", section->getTag("Y")->toTag<int8_t>()->getValue());
 			TagArray<int64_t>* blockStates = section->getTag("BlockStates")->toTagArray<int64_t>();
 			TagList* p = section->getTag("Palette")->toList();
 

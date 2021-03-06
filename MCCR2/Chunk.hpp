@@ -10,6 +10,7 @@
 #include <array>
 #include "Asset.hpp"
 #include <thread>
+#include "glm/ext.hpp"
 
 class World;
 

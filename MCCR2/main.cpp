@@ -20,7 +20,7 @@ int main(void)
 {
 
 
-	vec3 initPos = vec3(0, 128, 0);
+	vec3 initPos = vec3(1, 1, 1);
 
 
 	Renderer r(1920, 1080);
@@ -32,6 +32,6 @@ int main(void)
 	Asset* ass = new Asset(r.loadTextures(TEXTURE_DIR_PATH));
 	World w(saveFolder + "/region", ass, 0, initPos.x, initPos.z);
 
-	r.run(w);
+	r.run(w, initPos);
 	//w.close();
 }

@@ -56,5 +56,6 @@ public:
 	mat4 getView();
 	float getId();
 	vec3 getPos();
+	void setPos(vec3 pos);
 
 };

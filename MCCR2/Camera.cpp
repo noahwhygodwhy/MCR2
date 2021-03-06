@@ -16,6 +16,12 @@ vec3 Camera::getPos()
 }
 
 
+void Camera::setPos(vec3 pos)
+{
+	this->position = pos;
+	updateVectors();
+}
+
 void Camera::keyboardInput(Direction dir, float time)
 {
 	float vel = time * movementSpeed;

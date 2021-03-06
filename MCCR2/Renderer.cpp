@@ -255,8 +255,10 @@ GLFWwindow* Renderer::initializeOpenGL()
 }
 
 
-void Renderer::run(World& world)
+void Renderer::run(World& world, vec3 initPos)
 {
+	cam.setPos(initPos);
+	world.givePos(cam.getPos());
 	glBindTexture(GL_TEXTURE_2D, foliageColorMap);
 	printf("#######foliage color map is null: %s\n", foliageColorMap == 0 ? "true" : "false");
 	glBindTexture(GL_TEXTURE_2D_ARRAY, largeTextureStack);
