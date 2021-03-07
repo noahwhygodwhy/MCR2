@@ -92,6 +92,7 @@ void Shader::use()
     glUseProgram(program);
 }
 
+
 //ways of setting a value in the shader without direct access to the shader. Kind of broad
 //access but ya know, it seems to work so i'm not going to touch it.
 void Shader::setBool(const string& name, bool value) const

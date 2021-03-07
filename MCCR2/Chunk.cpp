@@ -37,6 +37,7 @@ Chunk::Chunk(string saveFolder, int chkx, int chkz, Asset* ass)
 
 void Chunk::initializeChunk(World* world)
 {
+	printf("loading chunk %i,%i\n", chkx, chkz);
 	//printf("Creating chunk %i,%i\n", chkx, chkz);
 	CompoundTag* ct = decompress(saveFolder, chkx, chkz);
 	//printf("ct is null: %s\n", ct == 0 ? "true" : "false");
@@ -64,6 +65,7 @@ void Chunk::initializeChunk(World* world)
 		this->generateVertices(sections, biomes);
 
 		world->bufferItHere(vec2(chkx, chkz));
+		printf("loaded chunk %i,%i\n", chkx, chkz);
 		//printf("finished chunk %i, %i\n", chkx, chkz);
 	}
 }
@@ -102,14 +104,15 @@ void addFace(vector<Vert>& verts, const vec3& ax, const vec3& bx, const vec3& cx
 	vec3 c = cx;
 	vec3 d = dx;
 
-	tintUV = vec2(0.2f, 0.2f);
-	if (tintIndex == -1)
+	vec2 tintUV2;
+	if (tintIndex < 0)
 	{
 		//printf("setting tintUV to -1\n");
-		tintUV = vec2(-1.0f, -1.0f);
+		tintUV2 = vec2(-1.0f, -1.0f);
 	}
 	else //TODO:
 	{
+		tintUV2 = tintUV;
 		float scaleFactor = 1.005f;
 		//printf("tint index is %i\n", tintIndex);
 		a = scaleAroundCenter(scaleFactor, a);
@@ -117,6 +120,8 @@ void addFace(vector<Vert>& verts, const vec3& ax, const vec3& bx, const vec3& cx
 		c = scaleAroundCenter(scaleFactor, c);
 		d = scaleAroundCenter(scaleFactor, d);
 	}
+
+	//tintUV = vec2(-1.0f, -1.0f);
 
 	a += blockCoords;
 	b += blockCoords;
@@ -152,10 +157,11 @@ void addFace(vector<Vert>& verts, const vec3& ax, const vec3& bx, const vec3& cx
 	}*/
 
 
-	Vert v00(a, uv00, tintUV, texture);
-	Vert v01(b, uv01, tintUV, texture);
-	Vert v11(c, uv11, tintUV, texture);
-	Vert v10(d, uv10, tintUV, texture);
+	//printf("adding face with tintUV %f,%f\n", tintUV2.x, tintUV2.y);
+	Vert v00(a, uv00, tintUV2, texture);
+	Vert v01(b, uv01, tintUV2, texture);
+	Vert v11(c, uv11, tintUV2, texture);
+	Vert v10(d, uv10, tintUV2, texture);
 
 	verts.push_back(v00);
 	verts.push_back(v11);
@@ -283,26 +289,10 @@ void Chunk::generateVertices(const array<Section*, 20>& sections, const array<ar
 							for (const Element& e : block.elements)
 							{
 
-								//printf("model is from %i,%i,%i to %i,%i,%i\n", e.from.x, e.from.y, e.from.z, e.to.x, e.to.y, e.to.z);
-								
-								printf("xrot: %i, yrot: %i\n", e.xRot, e.yRot);
-
-								//printf("to: %i, %i, %i\n", e.to.x, e.to.y, e.to.z);
-								//printf("from: %i, %i %i\n", e.from.x, e.from.y, e.from.z);
 
 								ivec3 adjTo = adjust(e.to);
 								ivec3 adjFrom = adjust(e.from);
 
-								//printf("to: %i, %i, %i\n", adjTo.x, adjTo.y, adjTo.z);
-								//printf("from: %i, %i %i\n", adjFrom.x, adjFrom.y, adjFrom.z);
-
-								//int eyRot = 270;
-
-								//adjTo = performRotations(e.xRot, eyRot, adjTo);
-								//adjFrom = performRotations(e.xRot, eyRot, adjFrom);
-
-								//printf("to: %i, %i, %i\n", adjTo.x, adjTo.y, adjTo.z);
-								//printf("from: %i, %i %i\n", adjFrom.x, adjFrom.y, adjFrom.z);
 
 								ppp = performRotations(e.xRot, e.yRot, vec3(adjTo.x, adjTo.y, adjTo.z));
 								ppn = performRotations(e.xRot, e.yRot, vec3(adjTo.x, adjTo.y, adjFrom.z));
@@ -313,72 +303,31 @@ void Chunk::generateVertices(const array<Section*, 20>& sections, const array<ar
 								nnp = performRotations(e.xRot, e.yRot, vec3(adjFrom.x, adjFrom.y, adjTo.z));
 								nnn = performRotations(e.xRot, e.yRot, vec3(adjFrom.x, adjFrom.y, adjFrom.z));
 
-								/*ppp = vec3(adjTo.x, adjTo.y, adjTo.z);
-								ppn = vec3(adjTo.x, adjTo.y, adjFrom.z);
-								pnp = vec3(adjTo.x, adjFrom.y, adjTo.z);
-								pnn = vec3(adjTo.x, adjFrom.y, adjFrom.z);
-								npp = vec3(adjFrom.x, adjTo.y, adjTo.z);
-								npn = vec3(adjFrom.x, adjTo.y, adjFrom.z);
-								nnp = vec3(adjFrom.x, adjFrom.y, adjTo.z);
-								nnn = vec3(adjFrom.x, adjFrom.y, adjFrom.z);*/
-
-								/*mat4 rm = mat4(1.0f);//rm stands for rotation matrix
-
-								rm = rotate(rm, (float)radians((float)e.yRot), vec3(0, 1, 0));
-								rm = rotate(rm, (float)radians((float)e.xRot), vec3(-1, 0, 0));
-
-								ppp = rotateAroundCenter(rm, vec4(adjust(e.to.x, e.to.y, e.to.z), 0.0f));
-								ppn = rotateAroundCenter(rm, vec4(adjust(e.to.x, e.to.y, e.from.z), 0.0f));
-								pnp = rotateAroundCenter(rm, vec4(adjust(e.to.x, e.from.y, e.to.z), 0.0f));
-								pnn = rotateAroundCenter(rm, vec4(adjust(e.to.x, e.from.y, e.from.z), 0.0f));
-								npp = rotateAroundCenter(rm, vec4(adjust(e.from.x, e.to.y, e.to.z), 0.0f));
-								npn = rotateAroundCenter(rm, vec4(adjust(e.from.x, e.to.y, e.from.z), 0.0f));
-								nnp = rotateAroundCenter(rm, vec4(adjust(e.from.x, e.from.y, e.to.z), 0.0f));
-								nnn = rotateAroundCenter(rm, vec4(adjust(e.from.x, e.from.y, e.from.z), 0.0f));*/
-
-								
-
-								//printf("from: %i, %i, %i\n", e.from.x, e.from.y, e.from.z);
-								//printf("to: %i, %i, %i\n", e.to.x, e.to.y, e.to.z);
-
-								//printf("block coord in verticizing: %i, %i, %i\n", block.coords.x, block.coords.y, block.coords.z);
-								//printf("ppp: %f, %f, %f\n", ppp.x, ppp.y, ppp.z);
-								//printf("nnn %f, %f, %f\n", nnn.x, nnn.y, nnn.z);
-								//printf("bout to crash\n");
-								//vec2 tintUV = vec2(0.1, 0.1);
 								vec2 tintUV = getBiomeAttrs(biomes, block.coords);
-								//printf("didn't crash\n");
-
 								
 
 								if (block.faces & 0b00100000 && !(e.up.cullFace & 0b11000000))//+y
 								{
-									//printf("adding top\n");
 									addFace(this->verts, npn, npp, ppp, ppn, e.up.uv, e.up.rotation, e.yRot, e.uvLock, e.up.texture, e.up.tintIndex, tintUV, block.coords);
 								}
 								if (block.faces & 0b00010000 && !(e.down.cullFace & 0b11000000))//-y
 								{
-									//printf("adding bot\n");
 									addFace(this->verts, nnp, nnn, pnn, pnp, e.down.uv, e.down.rotation, e.yRot, e.uvLock, e.down.texture, e.down.tintIndex, tintUV, block.coords);
 								}
-								if (block.faces & 0b00001000 && !(e.east.cullFace & 0b11000000))//+x
+								if (block.faces & 0b00000100 && !(e.east.cullFace & 0b11000000))//+x
 								{
-									//printf("adding west\n");
 									addFace(this->verts, ppp, pnp, pnn, ppn, e.east.uv, e.east.rotation, e.yRot % 180 == 90 ? 0 : e.xRot, e.uvLock, e.east.texture, e.east.tintIndex, tintUV, block.coords);
 								}
-								if (block.faces & 0b00000100 && !(e.west.cullFace & 0b11000000))//-x
+								if (block.faces & 0b00001000 && !(e.west.cullFace & 0b11000000))//-x oor maybe the x's were backwards, i switched the bits
 								{
-									//printf("adding east\n");
 									addFace(this->verts, npn, nnn, nnp, npp, e.west.uv, e.west.rotation, e.yRot % 180 == 90 ? 0 : e.xRot, e.uvLock, e.west.texture, e.west.tintIndex, tintUV, block.coords);
 								}
 								if (block.faces & 0b00000010 && !(e.south.cullFace & 0b11000000))//+z
 								{
-									//printf("adding south\n");
 									addFace(this->verts, npp, nnp, pnp, ppp, e.south.uv, e.south.rotation, e.yRot % 180 == 0 ? 0 : e.xRot, e.uvLock, e.south.texture, e.south.tintIndex, tintUV, block.coords);
 								}
 								if (block.faces & 0b00000001 && !(e.north.cullFace & 0b11000000))//-z
 								{
-									//printf("adding north\n");
 									addFace(this->verts, ppn, pnn, nnn, npn, e.north.uv, e.north.rotation, e.yRot % 180 == 0 ? 0 : e.xRot, e.uvLock, e.north.texture, e.north.tintIndex, tintUV, block.coords);
 								}
 							}

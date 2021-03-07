@@ -16,11 +16,11 @@ using namespace glm;
 
 class Shader
 {
-    unsigned int program;
     unsigned int vertShader;
     unsigned int fragShader;
     unsigned int geoShader;
-public: 
+public:
+    unsigned int program;
     Shader(const char* vertexPath, const char* fragmentPath);
     Shader();
 

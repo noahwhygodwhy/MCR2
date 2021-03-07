@@ -114,19 +114,23 @@ unordered_map<string, int> Renderer::loadTextures(string path)
 {
 	printf("starting to load textures\n");
 	fflush(stdout);
+	glActiveTexture(GL_TEXTURE0);
 	glGenTextures(1, &(this->foliageColorMap));
 	glBindTexture(GL_TEXTURE_2D, this->foliageColorMap);
-	glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
-	glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
-	glTexStorage2D(GL_TEXTURE_2D_ARRAY, 1, GL_SRGB8_ALPHA8, 256, 256);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
 	int width, height, channels;
 
-	unsigned char* data = stbi_load((path+string("colormap/foliage.png")).c_str(), &width, &height, &channels, 4);
+	unsigned char* data = stbi_load((path+string("colormap/foliage.png")).c_str(), &width, &height, &channels, 3);
 
+
+
+	//glTexStorage2D(GL_TEXTURE_2D, 1, GL_SRGB8_ALPHA8, width, height);
 	//printf("it has %i channels\n", channels);
 	if (data == NULL)
 	{
@@ -144,6 +148,7 @@ unordered_map<string, int> Renderer::loadTextures(string path)
 	stbi_image_free(data);
 
 	printf("foliage image loaded\n");
+
 
 
 	unordered_map<string, int> toReturn;
@@ -195,6 +200,7 @@ unordered_map<string, int> Renderer::loadTextures(string path)
 	printf("layerCount: %i\n", layerCount);
 
 
+	glActiveTexture(GL_TEXTURE1);
 
 	glGenTextures(1, &(this->largeTextureStack));
 	glBindTexture(GL_TEXTURE_2D_ARRAY, this->largeTextureStack);
@@ -206,6 +212,7 @@ unordered_map<string, int> Renderer::loadTextures(string path)
 	glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
 	glTexStorage3D(GL_TEXTURE_2D_ARRAY, mipLevelCount, GL_SRGB8_ALPHA8, width, height, layerCount);
+
 
 	for (int32_t i = 0; i < sixteenImages.size(); i++)
 	{
@@ -250,6 +257,7 @@ GLFWwindow* Renderer::initializeOpenGL()
 	glEnable(GL_CULL_FACE);
 	glEnable(GL_FRAMEBUFFER_SRGB);
 	glEnable(GL_DEPTH_TEST);
+	//glEnable(GL_BLEND);
 	glFrontFace(GL_CCW);
 	return window;
 }
@@ -259,8 +267,11 @@ void Renderer::run(World& world, vec3 initPos)
 {
 	cam.setPos(initPos);
 	world.givePos(cam.getPos());
+	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, foliageColorMap);
 	printf("#######foliage color map is null: %s\n", foliageColorMap == 0 ? "true" : "false");
+
+	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D_ARRAY, largeTextureStack);
 	//glActiveTexture(GL_TEXTURE0);
 	//glActiveTexture(GL_TEXTURE1);
@@ -274,6 +285,9 @@ void Renderer::run(World& world, vec3 initPos)
 	while (!glfwWindowShouldClose(window))
 	{
 		shader.use();
+
+		shader.setInt("foliageColorMap", 0);
+		shader.setInt("largeTextureStack", 1);
 
 		glClear(GL_COLOR_BUFFER_BIT);
 		glClear(GL_DEPTH_BUFFER_BIT);

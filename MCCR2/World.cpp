@@ -8,7 +8,7 @@ World::World(string saveFolder, Asset* ass, int range, int initx, int initz)
 	this->chkz = initz;
 	this->range = range;
 	this->ass = ass;
-	this->adjustLoadedChunks();
+	//this->adjustLoadedChunks();
 }
 
 World::~World()
@@ -65,9 +65,9 @@ void World::adjustLoadedChunks()
 	//TODO: reenable threading
 	for (Chunk* c : chunksToGet)
 	{
-		initChunk(c, this);
-		//thread th(initChunk, c, this);
-		//th.detach();
+		//initChunk(c, this);
+		thread th(initChunk, c, this);
+		th.detach();
 	}
 
 
@@ -107,6 +107,7 @@ void World::draw()
 		
 		bufferQueue.front()->bufferData();
 		bufferQueue.front()->drawable = true;
+		printf("buffered %i, %i\n", bufferQueue.front()->chkx, bufferQueue.front()->chkz);
 
 		//printf("buffering %i,%i\n", bufferQueue.front()->chkx, bufferQueue.front()->chkz);
 		bufferQueue.pop();
