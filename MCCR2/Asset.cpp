@@ -65,24 +65,6 @@ void combineModels(Model& keeping, const Model& discarding)
 		keeping.AmbOcc = true;
 	}
 }
-//Model combineModels(const Model& keeping, const Model& discarding)
-//{
-//	//so you'll notice that this doesn't take the name of the models
-//	//into acount, and that is because at this point the names aren't used.
-//	Model m;
-//	m.elements.insert(m.elements.end(), keeping.elements.begin(), keeping.elements.end());
-//	m.elements.insert(m.elements.end(), discarding.elements.begin(), discarding.elements.end());
-//	m.model = keeping.model;
-//	if (keeping.cullForMe || discarding.cullForMe)
-//	{
-//		m.cullForMe = true;
-//	}
-//	if (keeping.AmbOcc || discarding.AmbOcc)
-//	{
-//		m.cullForMe = true;
-//	}
-//	return m;
-//}
 
 Model Asset::findModelFromAssets(string name, const unordered_map<string, string>& attributes)
 {
@@ -223,14 +205,11 @@ Face Asset::parseFaceJson(const json& faces, const string& faceStr, const unorde
 
 //parses the model information from the model.json
 //this includes all the parents' information
-Model Asset::parseModelJson(string name, int xRot, int yRot, int uvLock)
+Model Asset::parseModelJson(string name, int xRot, int yRot, bool uvLock)
 {
-	//printf("parsemodeljson: %s\n", name.c_str());
 
 	unordered_map<string, string> textures;//a map of texture names for when they are references (#name)
 
-	//json modelJson = fileToJson(MODEL_DIR_PATH + name + ".json");//am i just a dumbass? this was commented out
-	
 
 
 	string parent = name;
@@ -242,16 +221,10 @@ Model Asset::parseModelJson(string name, int xRot, int yRot, int uvLock)
 	m.model = name;
 	do
 	{
-		//printf("before:%s\n", parent.c_str());
-		//printf("%s\n", parent.substr(0, 10));
-		//printf("%s\n", parent.substr(0, 10).compare(string("minecraft:"))== 0 ? "match" : "false");
-		//printf("%s\n", strcmp(parent.substr(0, 10).c_str(), string("minecraft:").c_str())==0 ? "match" : "false");
 		if (parent.substr(0, 10).compare(string("minecraft:")) == 0)
 		{
 			parent = parent.substr(10);
 		}
-		//printf("%s\n", parent.c_str());
-		//parent = parent.substr(10);//to get rid of "minecraft:"
 		modelJson = fileToJson(MODEL_DIR_PATH + parent + ".json");
 		if (parent == "block/cube" || m.model == "block/grass_block")
 		{
@@ -375,10 +348,7 @@ BlockState Asset::parseBlockstateJson(string filepath)
 			attributes.conditions = parseAttributes(var.key());
 			onlyCondition.model = parseModel(var.value());
 			onlyCondition.when.push_back(attributes);
-			//if (var.key() == "facing=south,half=bottom,shape=straight")
-			//{
-			//	printf("x %i, y %i\n", onlyCondition.model.elements[0].xRot, onlyCondition.model.elements[0].yRot);
-			//}
+			
 			toAdd.variants.push_back(onlyCondition);
 		}
 	}
@@ -458,18 +428,13 @@ pair<long long int, long long int> addModelToVBO(directory_entry modelFile)
 Asset::Asset(const unordered_map<string, int>& tm)
 {
 	printf("starting to create Asset\n");
-	textureMap = tm;
+	this->textureMap = tm;
 
 	printf("loading blockstate jsons\n");
 	directory_iterator blockstateDir(BLOCKSTATE_DIR_PATH);
 	for (auto blockstateFile : blockstateDir)//for each blockstate
 	{
-		//if (blockstateFile.path().stem().u8string() == "black_glazed_terracotta")
-		//{
-			//printf("parsing: %s\n", blockstateFile.path().filename().stem().u8string().c_str());
 		assets[blockstateFile.path().stem().u8string()] = parseBlockstateJson(blockstateFile.path().u8string());
-
-		//}
 	}
 
 	printf("loaded all jsons\n");

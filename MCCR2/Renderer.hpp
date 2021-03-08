@@ -1,3 +1,10 @@
+/*! \file Renderer.hpp
+	\brief Contains the Renderer class.
+
+	\author Noah Alvard
+*/
+
+
 #pragma once
 #ifndef RENDERER_H
 #define RENDERER_H
@@ -21,6 +28,9 @@
 using namespace std;
 
 
+/*! \class Renderer
+*	\brief Renderer class duh lol 
+*/
 class Renderer
 {
 	unsigned int largeTextureStack = 0;
