@@ -8,7 +8,10 @@ World::World(string saveFolder, Asset* ass, int range, int initx, int initz)
 	this->chkz = initz;
 	this->range = range;
 	this->ass = ass;
-	//this->adjustLoadedChunks();
+	//TODO: 
+#ifndef TEST
+	this->adjustLoadedChunks();
+#endif
 }
 
 World::~World()
@@ -65,9 +68,15 @@ void World::adjustLoadedChunks()
 	//TODO: reenable threading
 	for (Chunk* c : chunksToGet)
 	{
-		//initChunk(c, this);
+#ifdef TEST
+		initChunk(c, this);
+#else
 		thread th(initChunk, c, this);
 		th.detach();
+#endif
+		//initChunk(c, this);
+		//thread th(initChunk, c, this);
+		//th.detach();
 	}
 
 

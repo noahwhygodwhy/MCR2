@@ -9,7 +9,22 @@
 #include "Asset.hpp"
 
 
+#define TEST
+
+
+
+#ifdef TEST
+#define INIT_POS vec3(3, 2, 1);
+string saveFolder = "C:/Users/noahm/AppData/Roaming/.minecraft/saves/New World2";
+int radius = 0;
+#else
+#define INIT_POS vec3(1, 64, 1)
 string saveFolder = "D:/OneDrive/Personal/MCCR2/New World";
+int radius = 5;
+#endif
+
+
+//string saveFolder = "D:/OneDrive/Personal/MCCR2/New World";
 //string saveFolder = "C:/Users/noahm/AppData/Roaming/.minecraft/saves/New World2";
 
 using namespace std;
@@ -20,7 +35,7 @@ int main(void)
 {
 
 
-	vec3 initPos = vec3(3, 64, 1);
+	vec3 initPos = INIT_POS;
 
 
 	Renderer r(1920, 1080);
@@ -30,7 +45,7 @@ int main(void)
 
 
 	Asset* ass = new Asset(r.loadTextures(TEXTURE_DIR_PATH));
-	World w(saveFolder + "/region", ass, 8, initPos.x, initPos.z);
+	World w(saveFolder + "/region", ass, radius, initPos.x, initPos.z);
 
 	r.run(w, initPos);
 	//w.close();

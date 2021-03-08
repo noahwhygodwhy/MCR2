@@ -2,7 +2,8 @@
 #include "Renderer.hpp"
 #include "Biomes.hpp"
 #include <algorithm>
-#include "glm/ext.hpp" 
+#include <glm/ext.hpp>
+#include <glm/gtx/euler_angles.hpp>
 
 using namespace std;
 using namespace std::filesystem;
@@ -86,9 +87,9 @@ Chunk::~Chunk()
 
 
 //TODO: this could be done better. It's rotating a cube in 90* increments. there has to be a better way than a rotation matrix
-vec4 rotateAroundCenter(const mat4& rm, const vec4& b)
+vec3 rotateAroundCenter(const mat4& rm, const vec3& b)
 {
-	return vec4(vec3(0.5f), 0.0f) + (rm * (b - vec4(vec3(0.5f), 0.0f)));
+	return vec3(0.5f) + vec3(rm * vec4(b - vec3(0.5f), 1.0f));
 }
 vec3 scaleAroundCenter(float factor, vec3 b)
 {
@@ -175,9 +176,9 @@ void addFace(vector<Vert>& verts, const vec3& ax, const vec3& bx, const vec3& cx
 
 
 
-ivec3 adjust(fvec3 in)
+fvec3 adjust(fvec3 in)
 {
-	return ivec3(in / 16.0f);
+	return fvec3(in / 16.0f);
 }
 
 vec3 adjust(const float& x, const float& y, const float& z)
@@ -202,7 +203,7 @@ vec2 Chunk::getBiomeAttrs(const array<array<array<uint32_t, 64>, 4>, 4>& biomes,
 		float temp = std::clamp(b.temp, 0.0f, 1.0f);
 		temp -= (coords.y - SEA_LEVEL) * TEMP_LOSS_PER_METER;
 		float rain = std::clamp(b.rain, 0.0f, 1.0f) * temp;
-		return vec2(temp, rain);
+		return vec2(rain, temp);
 	}
 	catch (exception e)//TODO:
 	{
@@ -290,8 +291,40 @@ void Chunk::generateVertices(const array<Section*, 20>& sections, const array<ar
 							{
 
 
+								//mat4 rm = eulerAngleXY(e.xRot, e.yRot);
+								mat4 rm(1.0);
+								rm = rotate(rm, (float)radians((float)e.xRot), vec3(-1, 0, 0));
+								rm = rotate(rm, (float)radians((float)e.yRot), vec3(0, -1, 0));
+
+
+								vec3 adjTo = adjust(e.to);
+								vec3 adjFrom = adjust(e.from);
+
+								//printf("pre rotation to: %i,%i,%i\n")
+
+
+
+								ppp = rotateAroundCenter(rm, vec3(adjTo.x, adjTo.y, adjTo.z));
+								ppn = rotateAroundCenter(rm, vec3(adjTo.x, adjTo.y, adjFrom.z));
+								pnp = rotateAroundCenter(rm, vec3(adjTo.x, adjFrom.y, adjTo.z));
+								pnn = rotateAroundCenter(rm, vec3(adjTo.x, adjFrom.y, adjFrom.z));
+								npp = rotateAroundCenter(rm, vec3(adjFrom.x, adjTo.y, adjTo.z));
+								npn = rotateAroundCenter(rm, vec3(adjFrom.x, adjTo.y, adjFrom.z));
+								nnp = rotateAroundCenter(rm, vec3(adjFrom.x, adjFrom.y, adjTo.z));
+								nnn = rotateAroundCenter(rm, vec3(adjFrom.x, adjFrom.y, adjFrom.z));
+
+
+
+
+
+
+								/*
+								
+
 								ivec3 adjTo = adjust(e.to);
 								ivec3 adjFrom = adjust(e.from);
+
+
 
 
 								ppp = performRotations(e.xRot, e.yRot, vec3(adjTo.x, adjTo.y, adjTo.z));
@@ -302,6 +335,10 @@ void Chunk::generateVertices(const array<Section*, 20>& sections, const array<ar
 								npn = performRotations(e.xRot, e.yRot, vec3(adjFrom.x, adjTo.y, adjFrom.z));
 								nnp = performRotations(e.xRot, e.yRot, vec3(adjFrom.x, adjFrom.y, adjTo.z));
 								nnn = performRotations(e.xRot, e.yRot, vec3(adjFrom.x, adjFrom.y, adjFrom.z));
+								
+								*/
+
+
 
 								vec2 tintUV = getBiomeAttrs(biomes, block.coords);
 								
@@ -485,13 +522,74 @@ size_t generateMask(const size_t& bits)
 }
 
 
+
+
+void printLong(size_t in, size_t bitwidth)
+{
+	string result = "";
+	size_t mine = in;
+	for (int i = 64; i > 0; i--)
+	{
+		//printf("%i", mine & 1);
+		result = (((mine & 1) == 1) ? "1" : "0") + result;
+		if ((i-1) % bitwidth == 0)
+		{
+			result = "|" + result;
+		}
+		mine = mine >> 1;
+	}
+	printf("%s\n", result.c_str());
+}
+
+
+
+
 //a function to get a specific block's palette index based on the given
 //bitWidth. There's definetly a more efficient way of doing this if it were to be done
 //one block after another, but like...it works for now. so i'll put this here 
 //todo: make it better ..?
 size_t getPaletteID(const vector<int64_t>& blockStates, const size_t& blockIndex, const size_t& bitWidth)
 {
-	size_t bitIndex = bitWidth * blockIndex;
+	size_t indexPerLong = 64 / bitWidth;
+	size_t longIndex = blockIndex / indexPerLong;
+
+
+	size_t indexInLong = blockIndex - (longIndex * indexPerLong);
+
+
+	size_t rightShift = indexInLong*bitWidth;
+	size_t toReturn = (blockStates[longIndex] >> rightShift) & generateMask(bitWidth);
+
+	return toReturn;
+	//size_t indexInLong = indexPerLong - (blockIndex - (longIndex * indexPerLong));
+
+
+
+	/*
+	printf("bitwidth: %lu\n", bitWidth);
+	size_t indexPerLong = 64 / bitWidth;
+	printf("indexPerLong: %lu\n", indexPerLong);
+	
+	size_t longIndex = blockIndex / indexPerLong;
+	printf("longIndex: %lu\n", longIndex);
+
+	size_t indexInLong = blockIndex - (longIndex * indexPerLong);
+	printf("indexInLong: %lu\n", indexInLong);
+
+	size_t rightShift = 64 - (bitWidth * (indexInLong+1));
+	printf("rightShift: %lu\n", rightShift);
+	printf("before right shift:");
+	printLong(blockStates[longIndex], bitWidth);
+	printf("after right shift:");
+	printLong(blockStates[longIndex] >> rightShift, bitWidth);
+
+	size_t toReturn = (blockStates[longIndex] >> rightShift) & generateMask(bitWidth);
+	printf("after mask:");
+	printLong(toReturn, bitWidth);
+	return toReturn;*/
+
+
+	/*size_t bitIndex = bitWidth * blockIndex;
 	size_t firstLongIndex = bitIndex / 64;
 	size_t secondLongIndex = (bitIndex + (bitWidth - 1)) / 64;
 	if (firstLongIndex == secondLongIndex)//it's all in one long
@@ -511,7 +609,7 @@ size_t getPaletteID(const vector<int64_t>& blockStates, const size_t& blockIndex
 		size_t secondHalfValue = (blockStates[secondLongIndex] & generateMask(bitWidth - bitWidthOfFirstHalf)) << bitWidthOfFirstHalf;
 		size_t toReturn = firstHalfValue | secondHalfValue;
 		return toReturn;
-	}
+	}*/
 }
 
 
@@ -553,7 +651,7 @@ void Chunk::createChunk(CompoundTag* root, Asset* ass, array<Section*, 20>& this
 			}
 		}
 	}
-	else
+	else//TODO: idk if needed..? 
 	{
 		//printf("biomes does not exist\n");
 		size_t i = 0;
@@ -587,6 +685,8 @@ void Chunk::createChunk(CompoundTag* root, Asset* ass, array<Section*, 20>& this
 			TagArray<int64_t>* blockStates = section->getTag("BlockStates")->toTagArray<int64_t>();
 			TagList* p = section->getTag("Palette")->toList();
 
+			//printf("starting with %i in the palette\n", p->getValues().size());
+
 			for (auto pc : p->getValues())//for each item in the palette
 			{
 				CompoundTag* paletteCompound = pc->toCT();
@@ -612,22 +712,28 @@ void Chunk::createChunk(CompoundTag* root, Asset* ass, array<Section*, 20>& this
 				}
 				toAdd->palette.push_back(ass->findModelFromAssets(name, attributes));
 			}
-			//printf("blockstates: %i\n", blockStates->getValues().size());
 
-			size_t bitWidth = blockStates->getValues().size() / 64;//number of longs/64 is how many bits each one takes
 
-			bitWidth = 4; //TODO: REMOVE/FIX
+			size_t bitWidth = std::max(4.0 , std::ceil(std::log2(toAdd->palette.size())));
+			
 
-			//printf("bitWidth: %lu\n", bitWidth);
+
+			
 			for (size_t y = 0; y < 16; y++)
 			{
 				for (size_t z = 0; z < 16; z++)
 				{
+					//for (size_t x = 15; x >= 0; x--)//TODO: uhhhh
 					for (size_t x = 0; x < 16; x++)
 					{
-						size_t blockIndex = (y * 256) + (z * 16) + x;
-						int palleteID = getPaletteID(blockStates->getValues(), blockIndex, bitWidth);
-						toAdd->blocks[y][z][x] = toAdd->palette[palleteID];
+						size_t blockIndex = (y * 256) + (z * 16) + x;//TODO: adjust for new block height
+						//printf("getting pallete id for block %i,%i,%i\n", x, y, z);
+						//printf("block index: %i\n", blockIndex);
+						int paletteID = getPaletteID(blockStates->getValues(), blockIndex, bitWidth);
+						//printf("palette id: %i\n", paletteID);
+						//printf("palette access: %s\n", toAdd->palette[paletteID].model.c_str());
+						toAdd->blocks[y][z][x] = toAdd->palette[paletteID];
+
 						toAdd-> blocks[y][z][x].coords = ivec3(x, y, z) + ivec3(chkx * 16, toAdd->y * 16, chkz * 16);
 
 					}
