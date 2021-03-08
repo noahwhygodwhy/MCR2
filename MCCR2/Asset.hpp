@@ -1,5 +1,5 @@
-#pragma once
-
+#ifndef ASSET_H
+#define ASSET_H
 #include <vector>
 #include <string>
 #include <unordered_map>
@@ -51,7 +51,7 @@ struct Face
 	int texture = 0;
 	uint8_t cullFace = 0b00000000;
 	ivec4 uv = ivec4(0, 0, 16, 16);
-	int rotation = 0;//TODO handle texture rotation, not just block rotation
+	int rotation = 0;//TODO: handle texture rotation, not just block rotation
 	int tintIndex = -1;
 	//todo tint index
 };
@@ -150,3 +150,5 @@ private:
 //Attribute::~Attribute()
 //{
 //}
+
+#endif

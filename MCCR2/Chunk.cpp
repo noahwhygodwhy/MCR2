@@ -96,8 +96,30 @@ vec3 scaleAroundCenter(float factor, vec3 b)
 	return vec3(0.5f) + ((b - vec3(0.5f))*factor);
 }
 
+
+vec2 rotUV(vec2 in, int rot)
+{
+	vec2 out = in - vec2(0.5f);
+	switch (rot)
+	{
+	case 90:
+		//printf("90 y rot\n");
+		out = vec2(-out.y, out.x);
+		break;
+	case 180:
+		out = -out;
+		break;
+	case 270:
+		out = vec2(out.y, -out.x);
+		break;
+	default:
+		break;
+	}
+	return out + vec2(0.5f);
+}
+
 //TODO: this is what sets up the UVs, so when it's wrong, this is to blame
-void addFace(vector<Vert>& verts, const vec3& ax, const vec3& bx, const vec3& cx, const vec3& dx, vec4 uv, int texRotation, int uvRotation, bool uvLock, int texture, int tintIndex, vec2 tintUV, const vec3& blockCoords)
+void addFace(vector<Vert>& verts, const vec3& ax, const vec3& bx, const vec3& cx, const vec3& dx, vec4 uv, int blockRotation, int uvRotation, bool uvLock, int texture, int tintIndex, vec2 tintUV, const vec3& blockCoords)
 {
 	
 	vec3 a = ax;
@@ -136,7 +158,31 @@ void addFace(vector<Vert>& verts, const vec3& ax, const vec3& bx, const vec3& cx
 	vec2 uv10 = vec2(uv.z, uv.y) / 16.0f;
 	//printf("\n");
 	//printf("texture rotation is %i\n", texRotation);
+
+
+	int totalRotation = uvRotation;
 	if (uvLock)
+	{
+		totalRotation += blockRotation;
+	}
+
+	totalRotation = (totalRotation + 360) % 360;//gotta make sure it's positive
+
+
+	uv00 = rotUV(uv00, totalRotation);
+	uv01 = rotUV(uv01, totalRotation);
+	uv11 = rotUV(uv11, totalRotation);
+	uv10 = rotUV(uv10, totalRotation);
+	/*for (int i = 0; i < totalRotation; i += 90)//maybe disable rotation? or have a look at it with a small sample size (1)?glhf
+	{
+		uv00 = rotUV(uv00, totalRotation);
+		uv01 = rotUV(uv01, totalRotation);
+		uv11 = rotUV(uv11, totalRotation);
+		uv10 = rotUV(uv10, totalRotation);
+	}*/
+
+
+	/*if (uvLock)
 	{
 		//printf("uvlocked\n");
 		texRotation -= uvRotation;
@@ -145,7 +191,7 @@ void addFace(vector<Vert>& verts, const vec3& ax, const vec3& bx, const vec3& cx
 	{
 		//printf("not uvlocked\n");
 	}
-	texRotation = ((texRotation % 360) + 360) % 360;//confines to 0 to 360
+	texRotation = ((texRotation % 360) + 360) % 360;//confines to 0 to 360*/
 
 	//bprintf("texture rotation is %i\n", texRotation);
 
