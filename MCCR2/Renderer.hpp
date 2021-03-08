@@ -21,19 +21,6 @@
 using namespace std;
 
 
-struct VertToBeRendered
-{
-	fvec3 coordinates;
-	fvec2 uv;
-	float texIndex;
-	VertToBeRendered(vec3 c, vec2 u, float t)
-	{
-		coordinates = c;
-		uv = u;
-		texIndex = t;
-	}
-};
-
 class Renderer
 {
 	unsigned int largeTextureStack = 0;

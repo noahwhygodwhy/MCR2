@@ -97,31 +97,36 @@ vec3 scaleAroundCenter(float factor, vec3 b)
 }
 
 
-vec2 rotUV(vec2 in, int rot)
+fvec2 rotUV(fvec2 in, int rot)
 {
-	vec2 out = in - vec2(0.5f);
+	fvec2 out = in - fvec2(0.5f);
 	switch (rot)
 	{
 	case 90:
 		//printf("90 y rot\n");
-		out = vec2(-out.y, out.x);
+		out = fvec2(-out.y, out.x);
 		break;
 	case 180:
-		out = -out;
+		//printf("180 y rot\n");
+		out = fvec2(-out.x, -out.y);
 		break;
 	case 270:
-		out = vec2(out.y, -out.x);
+		//printf("270 y rot\n");
+		out = fvec2(out.y, -out.x);
 		break;
 	default:
+		//printf("0 y rot\n");
 		break;
 	}
-	return out + vec2(0.5f);
+	return out + fvec2(0.5f);
 }
 
 //TODO: this is what sets up the UVs, so when it's wrong, this is to blame
-void addFace(vector<Vert>& verts, const vec3& ax, const vec3& bx, const vec3& cx, const vec3& dx, vec4 uv, int blockRotation, int uvRotation, bool uvLock, int texture, int tintIndex, vec2 tintUV, const vec3& blockCoords)
+void addFace(vector<Vert>& verts, const vec3& ax, const vec3& bx, const vec3& cx, const vec3& dx, vec4 uv, int uvRotation, int blockRotation, bool uvLock, int texture, int tintIndex, vec2 tintUV, const vec3& blockCoords)
 {
-	
+	printf("blockRot: %i, uvRot: %i, uvLock: %s", blockRotation, uvRotation, uvLock?"true":"false");
+
+
 	vec3 a = ax;
 	vec3 b = bx;
 	vec3 c = cx;
@@ -152,57 +157,33 @@ void addFace(vector<Vert>& verts, const vec3& ax, const vec3& bx, const vec3& cx
 	d += blockCoords;
 
 
-	vec2 uv00 = vec2(uv.x, uv.y) / 16.0f;
-	vec2 uv01 = vec2(uv.x, uv.w) / 16.0f;
-	vec2 uv11 = vec2(uv.z, uv.w) / 16.0f;
-	vec2 uv10 = vec2(uv.z, uv.y) / 16.0f;
+	fvec2 uv00 = fvec2(uv.x, uv.y) / 16.0f;
+	fvec2 uv01 = fvec2(uv.x, uv.w) / 16.0f;
+	fvec2 uv11 = fvec2(uv.z, uv.w) / 16.0f;
+	fvec2 uv10 = fvec2(uv.z, uv.y) / 16.0f;
 	//printf("\n");
 	//printf("texture rotation is %i\n", texRotation);
 
-
+	//TODO: fix this
 	int totalRotation = uvRotation;
+
 	if (uvLock)
 	{
-		totalRotation += blockRotation;
+		totalRotation -= blockRotation;
 	}
+	/*if (!uvLock)
+	{
+		totalRotation += blockRotation;
+	}*/
 
 	totalRotation = (totalRotation + 360) % 360;//gotta make sure it's positive
-
+	printf(", total rotation %i\n", totalRotation);
 
 	uv00 = rotUV(uv00, totalRotation);
 	uv01 = rotUV(uv01, totalRotation);
 	uv11 = rotUV(uv11, totalRotation);
 	uv10 = rotUV(uv10, totalRotation);
-	/*for (int i = 0; i < totalRotation; i += 90)//maybe disable rotation? or have a look at it with a small sample size (1)?glhf
-	{
-		uv00 = rotUV(uv00, totalRotation);
-		uv01 = rotUV(uv01, totalRotation);
-		uv11 = rotUV(uv11, totalRotation);
-		uv10 = rotUV(uv10, totalRotation);
-	}*/
-
-
-	/*if (uvLock)
-	{
-		//printf("uvlocked\n");
-		texRotation -= uvRotation;
-	}
-	else
-	{
-		//printf("not uvlocked\n");
-	}
-	texRotation = ((texRotation % 360) + 360) % 360;//confines to 0 to 360*/
-
-	//bprintf("texture rotation is %i\n", texRotation);
-
-	/*for (int i = 0; i < texRotation; i += 90)//maybe disable rotation? or have a look at it with a small sample size (1)?glhf
-	{
-		uv00 = rot90(uv00);
-		uv01 = rot90(uv01);
-		uv11 = rot90(uv11);
-		uv10 = rot90(uv10);
-	}*/
-
+	
 
 	//printf("adding face with tintUV %f,%f\n", tintUV2.x, tintUV2.y);
 	Vert v00(a, uv00, tintUV2, texture);
@@ -332,7 +313,7 @@ void Chunk::generateVertices(const array<Section*, 20>& sections, const array<ar
 					{
 						if (block.model != "block/air" && block.model != "block/void_air" && block.model != "block/cave_air" && block.model != "NULL") //TODO: needs to include other types of air too
 						{
-							//printf("-----------------------------\nverticizing %s\n", block.model.c_str());
+							printf("-----------------------------\nverticizing %s\n", block.model.c_str());
 							for (const Element& e : block.elements)
 							{
 
@@ -342,6 +323,7 @@ void Chunk::generateVertices(const array<Section*, 20>& sections, const array<ar
 								rm = rotate(rm, (float)radians((float)e.xRot), vec3(-1, 0, 0));
 								rm = rotate(rm, (float)radians((float)e.yRot), vec3(0, -1, 0));
 
+								printf("xrot: %i, yrot: %i\n", e.xRot, e.yRot);
 
 								vec3 adjTo = adjust(e.to);
 								vec3 adjFrom = adjust(e.from);
@@ -397,13 +379,13 @@ void Chunk::generateVertices(const array<Section*, 20>& sections, const array<ar
 								{
 									addFace(this->verts, nnp, nnn, pnn, pnp, e.down.uv, e.down.rotation, e.yRot, e.uvLock, e.down.texture, e.down.tintIndex, tintUV, block.coords);
 								}
-								if (block.faces & 0b00000100 && !(e.east.cullFace & 0b11000000))//+x
+								if (block.faces & 0b00001000 && !(e.east.cullFace & 0b11000000))//+x
 								{
-									addFace(this->verts, ppp, pnp, pnn, ppn, e.east.uv, e.east.rotation, e.yRot % 180 == 90 ? 0 : e.xRot, e.uvLock, e.east.texture, e.east.tintIndex, tintUV, block.coords);
+									addFace(this->verts, npn, nnn, nnp, npp, e.east.uv, e.east.rotation, e.yRot % 180 == 90 ? 0 : e.xRot, e.uvLock, e.east.texture, e.east.tintIndex, tintUV, block.coords);
 								}
-								if (block.faces & 0b00001000 && !(e.west.cullFace & 0b11000000))//-x oor maybe the x's were backwards, i switched the bits
+								if (block.faces & 0b00000100 && !(e.west.cullFace & 0b11000000))//-x oor maybe the x's were backwards, i switched the bits
 								{
-									addFace(this->verts, npn, nnn, nnp, npp, e.west.uv, e.west.rotation, e.yRot % 180 == 90 ? 0 : e.xRot, e.uvLock, e.west.texture, e.west.tintIndex, tintUV, block.coords);
+									addFace(this->verts, ppp, pnp, pnn, ppn, e.west.uv, e.west.rotation, e.yRot % 180 == 90 ? 0 : e.xRot, e.uvLock, e.west.texture, e.west.tintIndex, tintUV, block.coords);
 								}
 								if (block.faces & 0b00000010 && !(e.south.cullFace & 0b11000000))//+z
 								{
@@ -514,7 +496,12 @@ void Chunk::cullChunk(const array<Section*, 20>& sections)
 							//printf("section %s\n", section->blocks[y][z][x].model.c_str());
 						}
 						string name = section->blocks[y][z][x].model;
-						//printf("name: %s\n", name.c_str());
+
+						if (name.substr(0, 10).compare(string("minecraft:")) == 0)
+						{
+							name = name.substr(10);
+						}
+
 						if (name == "block/air" || name == "block/void_air" || name == "block/cave_air")
 						{
 							section->blocks[y][z][x].model = "NULL";

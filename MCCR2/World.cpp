@@ -9,7 +9,7 @@ World::World(string saveFolder, Asset* ass, int range, int initx, int initz)
 	this->range = range;
 	this->ass = ass;
 	//TODO: 
-#ifndef TEST
+#ifdef TEST
 	this->adjustLoadedChunks();
 #endif
 }
