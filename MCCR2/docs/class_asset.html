@@ -138,7 +138,7 @@ Private Attributes</h2></td></tr>
 <p>A singleton style class that exists to parse a bunch of json files and provide the information for chunk creation. Provides 3 primary maps: A map between minecraft textures, and their index in the "Large Texture Stack" A map between model names, and the parsed json for each respective model. A map between blockstate names, and the parsed json for each respective blockstate.</p>
 <dl class="section see"><dt>See also</dt><dd><a class="el" href="class_renderer.html#a9a14c8680d9823a8e162fde9f96e2501">Renderer::loadTextures()</a> </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_asset_8hpp_source.html#l00151">151</a> of file <a class="el" href="_asset_8hpp_source.html">Asset.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_asset_8hpp_source.html#l00150">150</a> of file <a class="el" href="_asset_8hpp_source.html">Asset.hpp</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a487aba50587323388f157a4598ccbfee"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a487aba50587323388f157a4598ccbfee">&#9670;&nbsp;</a></span>Asset()</h2>
@@ -155,7 +155,7 @@ Private Attributes</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p><a class="el" href="class_asset.html" title="A singleton style class that exists to parse a bunch of json files and provide the information for ch...">Asset</a> Constructor Iterates through the blockstate folder json files, parses the json files to Blockstates, and maps them to the name of the <a class="el" href="struct_block_state.html" title="A struct to represent a blockstate. If type is MULTIPART, all Models for each conditional are used....">BlockState</a>. In this proces, it also creates a mapping of <a class="el" href="struct_model.html" title="A structure to represent a block in minecraft.">Model</a> names to Models in order to prevent re-doing work. <a class="el" href="class_asset.html" title="A singleton style class that exists to parse a bunch of json files and provide the information for ch...">Asset</a> constructor requires the texture map be provided as the <a class="el" href="class_renderer.html" title="Renderer class duh lol.">Renderer</a> is the one to create the Large Texture Stack that coresponds to the texture map. </p><dl class="params"><dt>Parameters</dt><dd>
+<p><a class="el" href="class_asset.html" title="A singleton style class that exists to parse a bunch of json files and provide the information for ch...">Asset</a> Constructor Iterates through the blockstate folder json files, parses the json files to Blockstates, and maps them to the name of the <a class="el" href="struct_block_state.html" title="A struct to represent a blockstate. If type is MULTIPART, all Models for each conditional are used....">BlockState</a>. In this proces, it also creates a mapping of <a class="el" href="struct_model.html" title="A structure to represent a block in minecraft.">Model</a> names to Models in order to prevent re-doing work. <a class="el" href="class_asset.html" title="A singleton style class that exists to parse a bunch of json files and provide the information for ch...">Asset</a> constructor requires the texture map be provided as the <a class="el" href="class_renderer.html" title="A class that handles the openGL context and render loop.">Renderer</a> is the one to create the Large Texture Stack that coresponds to the texture map. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">tm</td><td>Maps minecraft texture names to the index of that texture in the Large Texture Stack. </td></tr>
   </table>
@@ -362,15 +362,15 @@ Private Attributes</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Parses one of the "faces" sections of a minecraft model json file, and returns a <a class="el" href="struct_face.html">Face</a> initialized with the data from the json. </p><dl class="params"><dt>Parameters</dt><dd>
+<p>Parses one of the "faces" sections of a minecraft model json file, and returns a <a class="el" href="struct_face.html" title="A structure to represent a face of a cuboid element.">Face</a> initialized with the data from the json. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">faces</td><td>The json object containing the information about the faces of the model. </td></tr>
-    <tr><td class="paramname">faceStr</td><td>A compass direction (or "up" or "down") indicating which of the 6 faces to parse into a <a class="el" href="struct_face.html">Face</a>. </td></tr>
+    <tr><td class="paramname">faceStr</td><td>A compass direction (or "up" or "down") indicating which of the 6 faces to parse into a <a class="el" href="struct_face.html" title="A structure to represent a face of a cuboid element.">Face</a>. </td></tr>
     <tr><td class="paramname">textures</td><td>A mapping between arbitrary texture labels from the json to the names (<em>not indidces</em>) of real textures. </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>A <a class="el" href="struct_face.html">Face</a> with all the information from the json.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>A <a class="el" href="struct_face.html" title="A structure to represent a face of a cuboid element.">Face</a> with all the information from the json.</dd></dl>
 <p>Parses the json file(s) representing a model. I would definetly recommend reading <a href="https://minecraft.gamepedia.com/Model#Block_models">https://minecraft.gamepedia.com/Model#Block_models</a>  </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">name</td><td>The name of the model. </td></tr>
@@ -494,7 +494,7 @@ Private Attributes</h2></td></tr>
 
 <p>A mapping of blockstate names to the parsed json dat for said blockstate. </p>
 
-<p class="definition">Definition at line <a class="el" href="_asset_8hpp_source.html#l00156">156</a> of file <a class="el" href="_asset_8hpp_source.html">Asset.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_asset_8hpp_source.html#l00155">155</a> of file <a class="el" href="_asset_8hpp_source.html">Asset.hpp</a>.</p>
 
 </div>
 </div>
@@ -520,7 +520,7 @@ Private Attributes</h2></td></tr>
 
 <p>A mapping of model names to the parsed json data for said model. </p>
 
-<p class="definition">Definition at line <a class="el" href="_asset_8hpp_source.html#l00155">155</a> of file <a class="el" href="_asset_8hpp_source.html">Asset.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_asset_8hpp_source.html#l00154">154</a> of file <a class="el" href="_asset_8hpp_source.html">Asset.hpp</a>.</p>
 
 </div>
 </div>
@@ -546,7 +546,7 @@ Private Attributes</h2></td></tr>
 
 <p>A mapping of texture names to the index of said texture in the Large Texture Stack. </p>
 
-<p class="definition">Definition at line <a class="el" href="_asset_8hpp_source.html#l00154">154</a> of file <a class="el" href="_asset_8hpp_source.html">Asset.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_asset_8hpp_source.html#l00153">153</a> of file <a class="el" href="_asset_8hpp_source.html">Asset.hpp</a>.</p>
 
 </div>
 </div>
