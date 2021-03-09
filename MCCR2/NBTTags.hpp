@@ -1,3 +1,10 @@
+/*! \file NBTTags.hpp
+* This file contains everything you need to parse the NBT data of a minecraft save file.
+* I suppose it would work for any old NBT data, but IDK if anything uses it besides minecraft.
+* I would read this before going any further <a href="https://minecraft.gamepedia.com/NBT_format">https://minecraft.gamepedia.com/NBT_format</a>
+*/
+
+
 #ifndef NBTTAGS_H
 #define NBTTAGS_H
 #pragma once
@@ -7,6 +14,8 @@
 //#include "Chunk.hpp"
 //#include "RegionLoader.h"
 #include <unordered_map>
+
+
 
 enum TagType
 {
@@ -42,11 +51,16 @@ class CompoundTag;
 
 
 
-
+/*! \class SuperTag
+* The all encompassing tag type. Every other tag is a subclass of this tag.
+* P O L Y M O R P H I C
+* Basically abstract, shouldn't really be initialized.
+*/
 class SuperTag
 {
 	TagType type;
 public:
+	
 	SuperTag(TagType t)
 	{
 		type = t;
@@ -194,17 +208,9 @@ private:
 };
 
 string tts(TagType t);
-
-//vector<Chunk> loadRegion(string filename);
-//SuperTag* parseNBT(vector<unsigned char>& decompressedData, size_t *index);
-//SuperTag* parseNBT(vector<unsigned char>& decompressedData, size_t* index, bool justPayload = false, TagType type = TAG_NOT_EXIST);
-
-
 int32_t nextUTF8Char(size_t* index, vector<unsigned char>& decompressedData);
-
 CompoundTag* parseNBT(vector<unsigned char>& decompressedData, size_t* index);
 SuperTag* parseNBT(vector<unsigned char>& decompressedData, size_t* index, TagType type);
-
 Tag<int8_t>* parseByteTag(vector<unsigned char>& decompressedData, size_t* index, TagType type);
 Tag<int16_t>* parseShortTag(vector<unsigned char>& decompressedData, size_t* index, TagType type);
 Tag<int32_t>* parseIntTag(vector<unsigned char>& decompressedData, size_t* index, TagType type);

@@ -1,5 +1,7 @@
 /*! \file Chunk.hpp
-* Contains the Chunk class and a few things that go with it.
+*   \brief Contains the Chunk class and a few things that go with it.
+*
+*	\author Noah Alvard
 */
 
 #ifndef CHUNK_H
