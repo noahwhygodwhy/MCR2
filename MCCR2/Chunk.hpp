@@ -1,3 +1,7 @@
+/*! \file Chunk.hpp
+* Contains the Chunk class and a few things that go with it.
+*/
+
 #ifndef CHUNK_H
 #define CHUNK_H
 
@@ -11,7 +15,8 @@
 #include "Asset.hpp"
 #include <thread>
 #include "glm/ext.hpp"
-#
+
+//#include "World.hpp"
 
 class World;
 
@@ -19,11 +24,15 @@ class World;
 using namespace std;
 using namespace std::filesystem;
 
+
+/*! \struct Section
+	A structure to respresent a minecraft Section
+*/
 struct Section
 {
-	int y = -1;
-	vector<Model> palette;
-	array<array<array<Model, 16>, 16>, 16> blocks;
+	int y = -1;///<The Y level of the Section
+	//vector<Model> palette; ///<The palette of blocks in the section
+	array<array<array<Model, 16>, 16>, 16> blocks; ///The models in the section
 };
 
 

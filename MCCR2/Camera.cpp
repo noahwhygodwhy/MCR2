@@ -3,7 +3,7 @@
 #include <iostream>
 #include "glad.h"
 #include "DirectionEnum.h"
-#include "Camera.h"
+#include "Camera.hpp"
 #include <glm/glm.hpp>
 
 

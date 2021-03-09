@@ -707,6 +707,7 @@ void Chunk::createChunk(CompoundTag* root, Asset* ass, array<Section*, 20>& this
 	int a = 0;
 	for (auto sec : sections->getValues())//for each section
 	{
+		vector<Model> toAddPalette;
 		CompoundTag* section = sec->toCT();
 
 		if (section->values.count("BlockStates") > 0)//if it is a real section
@@ -743,11 +744,11 @@ void Chunk::createChunk(CompoundTag* root, Asset* ass, array<Section*, 20>& this
 						//printf("name: %s\n", name.c_str());
 					}
 				}
-				toAdd->palette.push_back(ass->findModelFromAssets(name, attributes));
+				toAddPalette.push_back(ass->findModelFromAssets(name, attributes));
 			}
 
 
-			size_t bitWidth = std::max(4.0 , std::ceil(std::log2(toAdd->palette.size())));
+			size_t bitWidth = std::max(4.0 , std::ceil(std::log2(toAddPalette.size())));
 			
 
 
@@ -764,8 +765,8 @@ void Chunk::createChunk(CompoundTag* root, Asset* ass, array<Section*, 20>& this
 						//printf("block index: %i\n", blockIndex);
 						int paletteID = getPaletteID(blockStates->getValues(), blockIndex, bitWidth);
 						//printf("palette id: %i\n", paletteID);
-						//printf("palette access: %s\n", toAdd->palette[paletteID].model.c_str());
-						toAdd->blocks[y][z][x] = toAdd->palette[paletteID];
+						//printf("palette access: %s\n", toAddPalette[paletteID].model.c_str());
+						toAdd->blocks[y][z][x] = toAddPalette[paletteID];
 
 						toAdd-> blocks[y][z][x].coords = ivec3(x, y, z) + ivec3(chkx * 16, toAdd->y * 16, chkz * 16);
 

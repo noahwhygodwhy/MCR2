@@ -17,7 +17,7 @@
 #include "glm/glm.hpp"
 #include "GLSLReader.h"
 #include "Shader.h"
-#include "Camera.h"
+#include "Camera.hpp"
 #include <map>
 #include <string>
 #include <vector>
