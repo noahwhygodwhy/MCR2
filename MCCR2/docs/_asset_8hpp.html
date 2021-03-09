@@ -75,7 +75,7 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 
-<p>Contains the <a class="el" href="class_asset.html">Asset</a> class plus some structs.  
+<p>Contains the <a class="el" href="class_asset.html" title="A singleton style class that exists to parse a bunch of json files and provide the information for ch...">Asset</a> class plus some structs.  
 <a href="#details">More...</a></p>
 <div class="textblock"><code>#include &lt;vector&gt;</code><br />
 <code>#include &lt;string&gt;</code><br />
@@ -102,12 +102,16 @@ Classes</h2></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A structure to represent a block in minecraft.  <a href="struct_model.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_conditions.html">Conditions</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A struct to map blockstate names to block conditions. It doens't <em>need</em> to be in a struct, but it helps keep it straight in my mind.  <a href="struct_conditions.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_conditional.html">Conditional</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A struct to represent a conditional model. If any of the conditions in when are met, then model is the <a class="el" href="struct_model.html" title="A structure to represent a block in minecraft.">Model</a> to be used.  <a href="struct_conditional.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_block_state.html">BlockState</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A struct to represent a blockstate. If type is MULTIPART, all Models for each conditional are used. Otherwise only the models who has a conditional that is true are used.  <a href="struct_block_state.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_asset.html">Asset</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A singleton style class that exists to parse a bunch of json files and provide the information for chunk creation.  <a href="class_asset.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="enum-members"></a>
@@ -128,7 +132,7 @@ Variables</h2></td></tr>
 <tr class="separator:ab9202eb6dd07c83b11dbab1a3859cdcd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Contains the <a class="el" href="class_asset.html">Asset</a> class plus some structs. </p>
+<div class="textblock"><p>Contains the <a class="el" href="class_asset.html" title="A singleton style class that exists to parse a bunch of json files and provide the information for ch...">Asset</a> class plus some structs. </p>
 <dl class="section author"><dt>Author</dt><dd>Noah Alvard </dd></dl>
 
 <p class="definition">Definition in file <a class="el" href="_asset_8hpp_source.html">Asset.hpp</a>.</p>

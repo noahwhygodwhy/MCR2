@@ -71,6 +71,9 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 
+<p>The all encompassing tag type. Every other tag is a subclass of this tag.  
+ <a href="class_super_tag.html#details">More...</a></p>
+
 <p><code>#include &lt;<a class="el" href="_n_b_t_tags_8hpp_source.html">NBTTags.hpp</a>&gt;</code></p>
 <div id="dynsection-0" onclick="return toggleVisibility(this)" class="dynheader closed" style="cursor:pointer;">
   <img id="dynsection-0-trigger" src="closed.png" alt="+"/> Inheritance diagram for SuperTag:</div>
@@ -80,10 +83,10 @@ $(function() {
  <div class="center">
   <img src="class_super_tag.png" usemap="#SuperTag_map" alt=""/>
   <map id="SuperTag_map" name="SuperTag_map">
-<area href="class_compound_tag.html" alt="CompoundTag" shape="rect" coords="0,56,97,80"/>
-<area href="class_tag.html" alt="Tag&lt; T &gt;" shape="rect" coords="107,56,204,80"/>
-<area href="class_tag_array.html" alt="TagArray&lt; T &gt;" shape="rect" coords="214,56,311,80"/>
-<area href="class_tag_list.html" alt="TagList" shape="rect" coords="321,56,418,80"/>
+<area href="class_compound_tag.html" title="Represents a compound tag. Has a mapping of names to various differen types of tags." alt="CompoundTag" shape="rect" coords="0,56,97,80"/>
+<area href="class_tag.html" title="A single value Tag of variable type. Basically just a container." alt="Tag&lt; T &gt;" shape="rect" coords="107,56,204,80"/>
+<area href="class_tag_array.html" title="A multiple value Tag of a (single) variable type. Basically just a container for an array." alt="TagArray&lt; T &gt;" shape="rect" coords="214,56,311,80"/>
+<area href="class_tag_list.html" title="A list of tags themselves. The Tags are all the same type as defined by subType." alt="TagList" shape="rect" coords="321,56,418,80"/>
   </map>
 </div></div>
 <table class="memberdecls">
@@ -113,9 +116,10 @@ Private Attributes</h2></td></tr>
 <tr class="separator:a5e9bdc8820d4aa723adf4e13fbe2d862"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>The all encompassing tag type. Every other tag is a subclass of this tag. P O L Y M O R P H I C Basically abstract, shouldn't really be initialized. </p>
+<div class="textblock"><p>The all encompassing tag type. Every other tag is a subclass of this tag. </p>
+<p>The all encompassing tag type. Every other tag is a subclass of this tag. P O L Y M O R P H I C Basically abstract, shouldn't really be initialized. </p>
 
-<p class="definition">Definition at line <a class="el" href="_n_b_t_tags_8hpp_source.html#l00071">71</a> of file <a class="el" href="_n_b_t_tags_8hpp_source.html">NBTTags.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_n_b_t_tags_8hpp_source.html#l00073">73</a> of file <a class="el" href="_n_b_t_tags_8hpp_source.html">NBTTags.hpp</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a8581668a9649b556768749c799cc2e7e"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a8581668a9649b556768749c799cc2e7e">&#9670;&nbsp;</a></span>SuperTag()</h2>
@@ -147,7 +151,7 @@ Private Attributes</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_n_b_t_tags_8hpp_source.html#l00079">79</a> of file <a class="el" href="_n_b_t_tags_8hpp_source.html">NBTTags.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_n_b_t_tags_8hpp_source.html#l00081">81</a> of file <a class="el" href="_n_b_t_tags_8hpp_source.html">NBTTags.hpp</a>.</p>
 
 </div>
 </div>
@@ -201,7 +205,7 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 <dl class="section return"><dt>Returns</dt><dd>The TagType of this tag. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_n_b_t_tags_8hpp_source.html#l00088">88</a> of file <a class="el" href="_n_b_t_tags_8hpp_source.html">NBTTags.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_n_b_t_tags_8hpp_source.html#l00090">90</a> of file <a class="el" href="_n_b_t_tags_8hpp_source.html">NBTTags.hpp</a>.</p>
 
 </div>
 </div>
@@ -219,7 +223,7 @@ Private Attributes</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<dl class="section return"><dt>Returns</dt><dd>This tag dynamic cast to a <a class="el" href="class_compound_tag.html">CompoundTag</a>. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>This tag dynamic cast to a <a class="el" href="class_compound_tag.html" title="Represents a compound tag. Has a mapping of names to various differen types of tags.">CompoundTag</a>. </dd></dl>
 
 <p class="definition">Definition at line <a class="el" href="_n_b_t_tags_8cpp_source.html#l00079">79</a> of file <a class="el" href="_n_b_t_tags_8cpp_source.html">NBTTags.cpp</a>.</p>
 
@@ -239,7 +243,7 @@ Private Attributes</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<dl class="section return"><dt>Returns</dt><dd>This tag dynamic cast to a <a class="el" href="class_tag_list.html">TagList</a>. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>This tag dynamic cast to a <a class="el" href="class_tag_list.html" title="A list of tags themselves. The Tags are all the same type as defined by subType.">TagList</a>. </dd></dl>
 
 <p class="definition">Definition at line <a class="el" href="_n_b_t_tags_8cpp_source.html#l00075">75</a> of file <a class="el" href="_n_b_t_tags_8cpp_source.html">NBTTags.cpp</a>.</p>
 
@@ -271,7 +275,7 @@ template&lt;class T &gt; </div>
 </div><div class="memdoc">
 <dl class="section return"><dt>Returns</dt><dd>This tag dynamic cast to a plain old Tag&lt;T&gt;. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_n_b_t_tags_8hpp_source.html#l00109">109</a> of file <a class="el" href="_n_b_t_tags_8hpp_source.html">NBTTags.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_n_b_t_tags_8hpp_source.html#l00111">111</a> of file <a class="el" href="_n_b_t_tags_8hpp_source.html">NBTTags.hpp</a>.</p>
 
 </div>
 </div>
@@ -301,7 +305,7 @@ template&lt;class T &gt; </div>
 </div><div class="memdoc">
 <dl class="section return"><dt>Returns</dt><dd>This tag dynamic cast to a TagArray&lt;T&gt;. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_n_b_t_tags_8hpp_source.html#l00118">118</a> of file <a class="el" href="_n_b_t_tags_8hpp_source.html">NBTTags.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_n_b_t_tags_8hpp_source.html#l00120">120</a> of file <a class="el" href="_n_b_t_tags_8hpp_source.html">NBTTags.hpp</a>.</p>
 
 </div>
 </div>
@@ -328,7 +332,7 @@ template&lt;class T &gt; </div>
 
 <p>The type of this tag. </p>
 
-<p class="definition">Definition at line <a class="el" href="_n_b_t_tags_8hpp_source.html#l00073">73</a> of file <a class="el" href="_n_b_t_tags_8hpp_source.html">NBTTags.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_n_b_t_tags_8hpp_source.html#l00075">75</a> of file <a class="el" href="_n_b_t_tags_8hpp_source.html">NBTTags.hpp</a>.</p>
 
 </div>
 </div>

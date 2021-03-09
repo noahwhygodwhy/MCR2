@@ -84,14 +84,19 @@ $(function() {
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
 Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_super_tag.html">SuperTag</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">The all encompassing tag type. Every other tag is a subclass of this tag.  <a href="class_super_tag.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_tag.html">Tag&lt; T &gt;</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A single value <a class="el" href="class_tag.html" title="A single value Tag of variable type. Basically just a container.">Tag</a> of variable type. Basically just a container.  <a href="class_tag.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_tag_array.html">TagArray&lt; T &gt;</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A multiple value <a class="el" href="class_tag.html" title="A single value Tag of variable type. Basically just a container.">Tag</a> of a (single) variable type. Basically just a container for an array.  <a href="class_tag_array.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_tag_list.html">TagList</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A list of tags themselves. The Tags are all the same type as defined by subType.  <a href="class_tag_list.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_compound_tag.html">CompoundTag</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Represents a compound tag. Has a mapping of names to various differen types of tags.  <a href="class_compound_tag.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="enum-members"></a>
@@ -158,7 +163,7 @@ Functions</h2></td></tr>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>This file contains everything you need to parse the NBT data of a minecraft save file. I suppose it would work for any old NBT data, but IDK if anything uses it besides minecraft. I would read this before going any further <a href="https://minecraft.gamepedia.com/NBT_format">https://minecraft.gamepedia.com/NBT_format</a></p>
 <p>The main entry point of this file is SuperTag* ParseNBT(). This starts the process of parsing the giant byte array known as "decompressedData". It must be given a pointer to an interger of value 0. It uses this integer as a bookmark in the decompressedData, slowly moving it as it iterates through the data. I can't guarentee the behavior of any of the other functions if not called from <a class="el" href="_n_b_t_tags_8hpp.html#ad11d3144fdfec3522b5b38ebcef10f75">parseNBT()</a> which was called with the decompressed data of a single chunk from a minecraft save file.</p>
-<p>Each parse[sometype]<a class="el" href="class_tag.html">Tag()</a> function recursively parses the NBT data interitvly, with the types of tags that contain other tags calling parse functions to fill up their lists and maps.</p>
+<p>Each parse[sometype]<a class="el" href="class_tag.html" title="A single value Tag of variable type. Basically just a container.">Tag()</a> function recursively parses the NBT data interitvly, with the types of tags that contain other tags calling parse functions to fill up their lists and maps.</p>
 <p>Every parse function is responsible for adding the number of bytes it read to the index value. </p>
 
 <p class="definition">Definition in file <a class="el" href="_n_b_t_tags_8hpp_source.html">NBTTags.hpp</a>.</p>
