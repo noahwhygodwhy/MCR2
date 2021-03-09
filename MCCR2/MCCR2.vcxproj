@@ -165,7 +165,7 @@
   <ItemGroup>
     <ClInclude Include="Asset.hpp" />
     <ClInclude Include="Biomes.hpp" />
-    <ClInclude Include="Camera.h" />
+    <ClInclude Include="Camera.hpp" />
     <ClInclude Include="Chunk.hpp" />
     <ClInclude Include="DirectionEnum.h" />
     <ClInclude Include="glad.h" />
