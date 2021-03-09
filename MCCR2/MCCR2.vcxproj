@@ -131,7 +131,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\OneDrive\Personal\MCCR2\MCCR2\external;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
       <AdditionalOptions>/D _SILENCE_ALL_CXX17_DEPRECATION_WARNINGS %(AdditionalOptions)</AdditionalOptions>
@@ -154,7 +154,7 @@
     <ClCompile Include="Asset.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Chunk.cpp" />
-    <ClCompile Include="glad.c" />
+    <ClCompile Include="external\glad.c" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="NBTTags.cpp" />
     <ClCompile Include="Renderer.cpp" />
@@ -166,14 +166,9 @@
     <ClInclude Include="Biomes.hpp" />
     <ClInclude Include="Camera.hpp" />
     <ClInclude Include="Chunk.hpp" />
-    <ClInclude Include="glad.h" />
-    <ClInclude Include="gunzip.hpp" />
-    <ClInclude Include="json.hpp" />
-    <ClInclude Include="khrplatform.h" />
     <ClInclude Include="NBTTags.hpp" />
     <ClInclude Include="Renderer.hpp" />
-    <ClInclude Include="Shader.h" />
-    <ClInclude Include="stb_image.h" />
+    <ClInclude Include="Shader.hpp" />
     <ClInclude Include="World.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

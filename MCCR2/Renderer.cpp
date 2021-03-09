@@ -4,8 +4,6 @@
 
 #define STB_IMAGE_IMPLEMENTATION
 
-#include "Shader.h"
-#include "World.hpp"
 #include <vector>
 #include <filesystem>
 #include <algorithm>

@@ -3,20 +3,16 @@
 
 #include <iostream>
 #include <string>
-#include "GLSLReader.h"
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
-#include "Shader.h"
+#include "Shader.hpp"
 using namespace glm;
 using namespace std;
-
-
 
 
 string fileToString(string filename)
 {
     printf("opening file %s\n", filename.c_str());
-
     string content;
     int length;
     ifstream stream(filename);

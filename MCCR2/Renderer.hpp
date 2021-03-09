@@ -13,8 +13,7 @@
 #include "glad.h"
 #include <GLFW/glfw3.h>
 #include "glm/glm.hpp"
-#include "GLSLReader.h"
-#include "Shader.h"
+#include "Shader.hpp"
 #include "Camera.hpp"
 #include <map>
 #include <string>

@@ -9,7 +9,6 @@
 #include "Asset.hpp"
 #include "glad.h"
 #include <GLFW/glfw3.h>
-#include "DirectionEnum.h"
 
 using namespace std;
 using namespace glm;
