@@ -25,13 +25,6 @@ void Camera::setPos(vec3 pos)
 void Camera::keyboardInput(Direction dir, float time)
 {
 	float vel = time * movementSpeed;
-	//printf("vel: %f\n", vel);
-	//printf("dir: %i\n", dir);
-	//printf("id: %f\n", id);
-	//printf("front: ");
-	//printVecThree(front);
-	//printf("position: ");
-	//printVecThree(position);
 	switch (dir)
 	{
 	case Direction::FORWARD:
@@ -63,8 +56,6 @@ void Camera::keyboardInput(Direction dir, float time)
 		break;
 	}
 	updateVectors();
-	////printf("new position: ");
-	//printVecThree(position);	
 }
 void Camera::mouseInput(float x, float y, GLboolean cp = GL_TRUE)
 {
@@ -88,10 +79,6 @@ mat4 Camera::getView()
 {
 	return lookAt(position, position + front, up);
 }
-//void Camera::moveLeft()
-//{
-//	position = position + (right*0.1f);
-//}
 void Camera::updateVectors()
 {
 	vec3 f;
@@ -101,14 +88,4 @@ void Camera::updateVectors()
 	front = normalize(f);
 	right = normalize(cross(front, worldUp));
 	up = normalize(cross(right, front));
-	////printf("front:\n");
-	//printVecThree(front);
-	////printf("right:\n");
-	//printVecThree(right);
-	//printf("up:\n");
-	//printVecThree(up);
-}
-float Camera::getId()
-{
-	return id;
 }

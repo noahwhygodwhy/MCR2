@@ -1,5 +1,21 @@
+/*! \file Biomes.hpp
+* This is not my file. This is constructed by eric haines. See file for copyright.
+* This file contains an array of Biome data useful for foliage tinting.
+*/
+
+
 #ifndef BIOMES_H
 #define BIOMES_H
+
+
+#include <string>
+
+
+//TODO: change when minecraft 1.17 arives
+#define SEA_LEVEL 62
+#define TEMP_LOSS_PER_METER 0.00166667f
+
+
 
 
 //Thank you eric haines <3
@@ -31,15 +47,12 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#include <string>
-
-
-//TODO: change when minecraft 1.17 arives
-#define SEA_LEVEL 62
-#define TEMP_LOSS_PER_METER 0.00166667f
 
 using namespace std;
 
+/*! \struct Biome
+* \brief A structure to hold the biome data for a single biome.
+*/
 struct Biome
 {
     string name;
@@ -49,7 +62,7 @@ struct Biome
     uint32_t foliage;
 };
 
-
+/*!\brief A static array to provide biome data.*/
 Biome biomeData[256] = {	// IMPORTANT: do not change 256 size here.
     //    ID    Name             Temperature, rainfall, grass, foliage colors
     //                                                  - note: the colors here are just placeholders, they are computed in the program
