@@ -1,5 +1,7 @@
+/*! \file Shader.hpp
+*   \brief Contains the Shader class.
+*/
 #pragma once
-
 #ifndef SHADER_H
 #define SHADER_H
 #include "glad.h"
@@ -14,6 +16,9 @@
 using namespace std;
 using namespace glm;
 
+/*! \class Shader
+* A class to handle the reading, compilation, and use of glsl shaders.
+*/
 class Shader
 {
     unsigned int vertShader;

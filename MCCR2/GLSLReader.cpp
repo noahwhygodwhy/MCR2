@@ -7,7 +7,7 @@
 
 using namespace std;
 
-string fileToString(string filename)
+/*string fileToString(string filename)
 {
 	printf("opening file %s\n", filename.c_str());
 
@@ -24,4 +24,4 @@ string fileToString(string filename)
 	return content;
 	//stream.close();
 	//return content;
-}
+}*/

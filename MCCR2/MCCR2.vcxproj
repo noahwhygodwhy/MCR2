@@ -155,7 +155,6 @@
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Chunk.cpp" />
     <ClCompile Include="glad.c" />
-    <ClCompile Include="GLSLReader.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="NBTTags.cpp" />
     <ClCompile Include="Renderer.cpp" />
@@ -167,9 +166,7 @@
     <ClInclude Include="Biomes.hpp" />
     <ClInclude Include="Camera.hpp" />
     <ClInclude Include="Chunk.hpp" />
-    <ClInclude Include="DirectionEnum.h" />
     <ClInclude Include="glad.h" />
-    <ClInclude Include="GLSLReader.h" />
     <ClInclude Include="gunzip.hpp" />
     <ClInclude Include="json.hpp" />
     <ClInclude Include="khrplatform.h" />

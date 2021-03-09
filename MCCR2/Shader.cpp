@@ -1,4 +1,6 @@
 
+
+
 #include <iostream>
 #include <string>
 #include "GLSLReader.h"
@@ -7,6 +9,28 @@
 #include "Shader.h"
 using namespace glm;
 using namespace std;
+
+
+
+
+string fileToString(string filename)
+{
+    printf("opening file %s\n", filename.c_str());
+
+    string content;
+    int length;
+    ifstream stream(filename);
+    stream.seekg(0, ios::end);
+    length = stream.tellg();
+    stream.seekg(0, ios::beg);
+    content.resize(length);
+    stream.read(content.data(), length);
+    printf("returning\n");
+    cout << content << endl;
+    return content;
+    //stream.close();
+    //return content;
+}
 
 //constructs a vertex shader from the file at the path of <filename>
 unsigned int makeVertexShader(string filename)

@@ -15,6 +15,16 @@ using namespace std;
 using namespace glm;
 
 
+enum class Direction {
+	FORWARD,
+	BACKWARD,
+	LEFT,
+	RIGHT,
+	UP,
+	DOWN,
+	YAW_LEFT,
+	YAW_RIGHT
+};
 
 /*! \class Camera
 * A class to represent a "Camera" the best way you can in opengl.

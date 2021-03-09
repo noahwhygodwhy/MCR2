@@ -1,7 +1,7 @@
 #ifndef DIRENUM
 #define DIRENUM
 
-enum class Direction {
+/*enum class Direction {
 	FORWARD,
 	BACKWARD,
 	LEFT,
@@ -10,6 +10,6 @@ enum class Direction {
 	DOWN,
 	YAW_LEFT,
 	YAW_RIGHT
-};
+};*/
 
 #endif

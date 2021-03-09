@@ -2,4 +2,4 @@
 #include <string>
 using namespace std;
 
-string fileToString(string filename);
+//tring fileToString(string filename);
