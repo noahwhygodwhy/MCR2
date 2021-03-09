@@ -39,25 +39,11 @@ Chunk::Chunk(string saveFolder, int chkx, int chkz, Asset* ass)
 void Chunk::initializeChunk(World* world)
 {
 	printf("loading chunk %i,%i\n", chkx, chkz);
-	//printf("Creating chunk %i,%i\n", chkx, chkz);
 	CompoundTag* ct = decompress(saveFolder, chkx, chkz);
 	//printf("ct is null: %s\n", ct == 0 ? "true" : "false");
 	if (ct != NULL)
 	{
-		//printf("%i,%i ct not null: %s\n", chkx, chkz, ct == NULL ? "false" : "true");
-		//printf("initialized buffers");
-
-
-		array<array<array<uint32_t, 64>, 4>, 4> biomes;
-
-		for (int i = 0; i < 4; i++)
-		{
-			for (int j = 0; j < 4; j++)
-			{
-				biomes[i][j].fill(0);
-			}
-		}
-
+		array<array<array<uint32_t, 64>, 4>, 4> biomes;		
 		array<Section*, 20> sections;
 
 		this->createChunk(ct, ass, sections, biomes);
@@ -594,55 +580,6 @@ size_t getPaletteID(const vector<int64_t>& blockStates, const size_t& blockIndex
 	size_t toReturn = (blockStates[longIndex] >> rightShift) & generateMask(bitWidth);
 
 	return toReturn;
-	//size_t indexInLong = indexPerLong - (blockIndex - (longIndex * indexPerLong));
-
-
-
-	/*
-	printf("bitwidth: %lu\n", bitWidth);
-	size_t indexPerLong = 64 / bitWidth;
-	printf("indexPerLong: %lu\n", indexPerLong);
-	
-	size_t longIndex = blockIndex / indexPerLong;
-	printf("longIndex: %lu\n", longIndex);
-
-	size_t indexInLong = blockIndex - (longIndex * indexPerLong);
-	printf("indexInLong: %lu\n", indexInLong);
-
-	size_t rightShift = 64 - (bitWidth * (indexInLong+1));
-	printf("rightShift: %lu\n", rightShift);
-	printf("before right shift:");
-	printLong(blockStates[longIndex], bitWidth);
-	printf("after right shift:");
-	printLong(blockStates[longIndex] >> rightShift, bitWidth);
-
-	size_t toReturn = (blockStates[longIndex] >> rightShift) & generateMask(bitWidth);
-	printf("after mask:");
-	printLong(toReturn, bitWidth);
-	return toReturn;*/
-
-
-	/*size_t bitIndex = bitWidth * blockIndex;
-	size_t firstLongIndex = bitIndex / 64;
-	size_t secondLongIndex = (bitIndex + (bitWidth - 1)) / 64;
-	if (firstLongIndex == secondLongIndex)//it's all in one long
-	{
-		size_t toReturn = (blockStates[firstLongIndex] >> bitIndex % 64) & generateMask(bitWidth);
-		return toReturn;
-	}
-	else //it's in two longs
-	{
-		size_t bitWidthOfFirstHalf = 0;
-		while ((bitIndex / 64) < secondLongIndex)
-		{
-			bitWidthOfFirstHalf++;
-			bitIndex++;
-		}
-		size_t firstHalfValue = (blockStates[firstLongIndex] >> (64 - bitWidthOfFirstHalf)) & generateMask(bitWidthOfFirstHalf);
-		size_t secondHalfValue = (blockStates[secondLongIndex] & generateMask(bitWidth - bitWidthOfFirstHalf)) << bitWidthOfFirstHalf;
-		size_t toReturn = firstHalfValue | secondHalfValue;
-		return toReturn;
-	}*/
 }
 
 
@@ -659,46 +596,34 @@ void Chunk::createChunk(CompoundTag* root, Asset* ass, array<Section*, 20>& this
 	CompoundTag* level = root->getTag("Level")->toCT();
 
 
-	//read in biome information
 	
 
 
+	for (int i = 0; i < 4; i++)
+	{
+		for (int j = 0; j < 4; j++)
+		{
+			biomes[i][j].fill(0);
+		}
+	}
 
-	if (level->getValues().count("Biomes") > 0)
+	vector<int32_t> biomeVector = level->getTag("Biomes")->toTagArray<int32_t>()->getValues();
+	size_t i = 0;
+	for (size_t z = 0; z < 4; z++)
 	{
-		//printf("it has biomes\n");
-		vector<int32_t> biomeVector = level->getTag("Biomes")->toTagArray<int32_t>()->getValues();
-		size_t i = 0;
-		for (size_t z = 0; z < 4; z++)
+		for (size_t x = 0; x < 4; x++)
 		{
-			for (size_t x = 0; x < 4; x++)
+			for (size_t y = 0; y < 64; y++)
 			{
-				for (size_t y = 0; y < 64; y++)
+				if (biomeVector[i] > 255)
 				{
-					if (biomeVector[i] > 255)
-					{
-						printf("x,y,z %i,%i,%i is biome %i\n", x, y, z, biomeVector[i]);
-					}
-					biomes[z][x][y] = biomeVector[i++];
+					printf("x,y,z %i,%i,%i is biome %i\n", x, y, z, biomeVector[i]);
 				}
+				biomes[z][x][y] = biomeVector[i++];
 			}
 		}
 	}
-	else//TODO: idk if needed..? 
-	{
-		//printf("biomes does not exist\n");
-		size_t i = 0;
-		for (size_t z = 0; z < 4; z++)
-		{
-			for (size_t x = 0; x < 4; x++)
-			{
-				for (size_t y = 0; y < 64; y++)
-				{
-					biomes[z][x][y] = 0;
-				}
-			}
-		}
-	}
+	
 
 	TagList* sections = level->getTag("Sections")->toList();
 
@@ -712,14 +637,11 @@ void Chunk::createChunk(CompoundTag* root, Asset* ass, array<Section*, 20>& this
 
 		if (section->values.count("BlockStates") > 0)//if it is a real section
 		{
-			//printf("real section %i\n", a++);
 			Section* toAdd = new Section();
 			toAdd->y = section->getTag("Y")->toTag<int8_t>()->getValue();
-			//printf("y is %i\n", section->getTag("Y")->toTag<int8_t>()->getValue());
 			TagArray<int64_t>* blockStates = section->getTag("BlockStates")->toTagArray<int64_t>();
 			TagList* p = section->getTag("Palette")->toList();
 
-			//printf("starting with %i in the palette\n", p->getValues().size());
 
 			for (auto pc : p->getValues())//for each item in the palette
 			{
@@ -730,18 +652,15 @@ void Chunk::createChunk(CompoundTag* root, Asset* ass, array<Section*, 20>& this
 				{
 					if (tagName == "Properties")
 					{
-						//printf("----\n");
 						CompoundTag* properties = tag->toCT();
 						for (const auto& [subTagName, subTag] : properties->getValues())//for each property
 						{
-							//printf("subtagName/subtag %s, %s\n", subTagName.c_str(), subTag->toTag<string>()->getValue().c_str());
 							attributes[subTagName] = subTag->toTag<string>()->getValue();
 						}
 					}
 					if (tagName == "Name")
 					{
 						name = tag->toTag<string>()->getValue();
-						//printf("name: %s\n", name.c_str());
 					}
 				}
 				toAddPalette.push_back(ass->findModelFromAssets(name, attributes));
@@ -757,15 +676,10 @@ void Chunk::createChunk(CompoundTag* root, Asset* ass, array<Section*, 20>& this
 			{
 				for (size_t z = 0; z < 16; z++)
 				{
-					//for (size_t x = 15; x >= 0; x--)//TODO: uhhhh
 					for (size_t x = 0; x < 16; x++)
 					{
 						size_t blockIndex = (y * 256) + (z * 16) + x;//TODO: adjust for new block height
-						//printf("getting pallete id for block %i,%i,%i\n", x, y, z);
-						//printf("block index: %i\n", blockIndex);
 						int paletteID = getPaletteID(blockStates->getValues(), blockIndex, bitWidth);
-						//printf("palette id: %i\n", paletteID);
-						//printf("palette access: %s\n", toAddPalette[paletteID].model.c_str());
 						toAdd->blocks[y][z][x] = toAddPalette[paletteID];
 
 						toAdd-> blocks[y][z][x].coords = ivec3(x, y, z) + ivec3(chkx * 16, toAdd->y * 16, chkz * 16);
@@ -773,17 +687,9 @@ void Chunk::createChunk(CompoundTag* root, Asset* ass, array<Section*, 20>& this
 					}
 				}
 			}
-			//printf("adding section at y %i\n", toAdd -> y);
 			thisSections[toAdd->y] = toAdd;
 		}
 	}
-
-	/*for (int i = 0; i < thisSections.size(); i++)
-	{
-		printf("section %i is null: %s\n", i, thisSections[i] == NULL ? "true" : "false");
-	}*/
-
-
 }
 
 
