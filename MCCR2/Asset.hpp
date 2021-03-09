@@ -30,7 +30,6 @@ static const string BLOCKSTATE_DIR_PATH = "../../MCCR2/minecraft/blockstates/";
 */
 struct Vert
 {
-	
 	fvec3 coord;///<The 3D coordinates of the vertex.
 	fvec2 uv;///<The 2D texture coordinates of the vertex.
 	fvec2 tintUV;///<The 2D texture coordinates of the vertex on the foliage texture.
@@ -45,7 +44,7 @@ struct Vert
 };
 
 
-/*! \struct Vert
+/*! \struct Face
 *	\brief A structure to represent a face of a cuboid element.
 */
 struct Face

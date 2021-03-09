@@ -26,7 +26,7 @@ using namespace std;
 
 
 /*! \class Renderer
-*	\brief Renderer class duh lol 
+*	\brief A class that handles the openGL context and render loop.
 */
 class Renderer
 {
