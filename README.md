@@ -1,7 +1,8 @@
 # Mineccraft Renderer Attempt Number 2
 
-~This time I am going to plan a lot more before starting any actual coding. Created this repo so early to connect to a documentation solution.~
+This is a minecraft renderer. Super early development. It is starting to work. Main issue rn are texture UVs and the handling of tint overlays. Z fighting in distant grass. Just fixed block rotation and grass biome color calculation. Taking a break and working on documentation. https://noahwhygodwhy.github.io/MCR2/ Accessing certain pages doesn't work as doxygen likes to put underscores at the front of some html file names. WIP :\
 
-Want to do more with instancing and smarter memory management. Last time was MESSY.
+If you reaaaallly want to try it out I'm sure you can figure it out. main.cpp has the absolute path to the save file. The asset stuff is all relative. It needs nuget packages glm and glfw in visual studio 19. Language standard C++17. Comment out "#define TEST" for better performance (enables threading). Also have to have command line arguments to disable depreciation warnings as one of the header files it uses had a bunch of depreciated stuff. Will update when it's working better.
 
-Started porting over the stuff that worked well. Mostly done with implementing smarter chunk loading. Doing it by chunk, instead of just the entire world. That was a bit silly.
+
+
