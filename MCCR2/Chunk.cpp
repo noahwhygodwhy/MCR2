@@ -110,7 +110,7 @@ fvec2 rotUV(fvec2 in, int rot)
 //TODO: this is what sets up the UVs, so when it's wrong, this is to blame
 void addFace(vector<Vert>& verts, const vec3& ax, const vec3& bx, const vec3& cx, const vec3& dx, vec4 uv, int uvRotation, int blockRotation, bool uvLock, int texture, int tintIndex, vec2 tintUV, const vec3& blockCoords)
 {
-	printf("blockRot: %i, uvRot: %i, uvLock: %s", blockRotation, uvRotation, uvLock?"true":"false");
+	//printf("blockRot: %i, uvRot: %i, uvLock: %s", blockRotation, uvRotation, uvLock?"true":"false");
 
 
 	vec3 a = ax;
@@ -163,7 +163,7 @@ void addFace(vector<Vert>& verts, const vec3& ax, const vec3& bx, const vec3& cx
 	}*/
 
 	totalRotation = (totalRotation + 360) % 360;//gotta make sure it's positive
-	printf(", total rotation %i\n", totalRotation);
+	//printf(", total rotation %i\n", totalRotation);
 
 	uv00 = rotUV(uv00, totalRotation);
 	uv01 = rotUV(uv01, totalRotation);
@@ -194,10 +194,6 @@ fvec3 adjust(fvec3 in)
 	return fvec3(in / 16.0f);
 }
 
-vec3 adjust(const float& x, const float& y, const float& z)
-{
-	return fvec3((x / 16.0f), (y / 16.0f), (z / 16.0f));
-}
 
 
 vec2 Chunk::getBiomeAttrs(const array<array<array<uint32_t, 64>, 4>, 4>& biomes, ivec3 coords)
@@ -299,7 +295,7 @@ void Chunk::generateVertices(const array<Section*, 20>& sections, const array<ar
 					{
 						if (block.model != "block/air" && block.model != "block/void_air" && block.model != "block/cave_air" && block.model != "NULL") //TODO: needs to include other types of air too
 						{
-							printf("-----------------------------\nverticizing %s\n", block.model.c_str());
+							//printf("-----------------------------\nverticizing %s\n", block.model.c_str());
 							for (const Element& e : block.elements)
 							{
 
@@ -309,7 +305,7 @@ void Chunk::generateVertices(const array<Section*, 20>& sections, const array<ar
 								rm = rotate(rm, (float)radians((float)e.xRot), vec3(-1, 0, 0));
 								rm = rotate(rm, (float)radians((float)e.yRot), vec3(0, -1, 0));
 
-								printf("xrot: %i, yrot: %i\n", e.xRot, e.yRot);
+								//printf("xrot: %i, yrot: %i\n", e.xRot, e.yRot);
 
 								vec3 adjTo = adjust(e.to);
 								vec3 adjFrom = adjust(e.from);
