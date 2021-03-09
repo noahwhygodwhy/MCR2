@@ -50,10 +50,12 @@ namespace std
 
 
 
-
+/*! \class World
+* \brief A class to represent the world. Also handles the loading/deloading of chunks.
+*/
 class World
 {
-	string saveFolder;
+	string saveFolder; ///<The path of the folder containing the minecraft save.
 	int chkx; ///<The global chunk x coordinate for which the center of the rendering is in.
 	int chkz; ///<The global chunk z coordinate for which the center of the rendering is in.
 	int range; ///<How many chunks in each direction should be loaded/set to be rendered.
@@ -65,13 +67,32 @@ class World
 public:
 	
 	/*! \fn World
-	* 
+	*	\param saveFolder The path of the folder containing the minecraft save
+	*	\param ass The Asset object allowing for chunk loading
+	*	\param range How many chunks in each direction to be loaded/set to be rendered
+	*	\param initx The x coordinate of the location of the chunk to load chunks in a square out from.
+	*	\param initz The z coordinate of the location of the chunk to load chunks in a square out from.
 	*/
 	World(string saveFolder, Asset* ass, int range, int initx, int initz);
 	~World();
+	/*! \fn givePos
+	*	\param pos The new center position.
+	*/
 	void givePos(ivec3 pos);
+	/*! \fn adjustLoadedChunks
+	*	\brief Re-evaluates which chunks should be loaded. Loads which chunks need to be loaded, and unload chunks that are more than one chunk out of range.
+	*/
 	void adjustLoadedChunks();
+	/*! \fn draw
+	*	\brief Draws each chunk that is set to be drawable.
+	*/
 	void draw();
+	/*! \fn bufferItHere
+	*	\brief Buffers the chunk at coords.
+	*	
+	*	This function is called by a different thread that was responsible for creating the chunk. The vertices must be buffered by the thread with the opengl context.
+	*	This function adds the chunk to the bufferQueue so when the next frame hits, the main thread buffers the vertices from that chunk.
+	*/
 	void bufferItHere(ivec2 coords);
 
 private:

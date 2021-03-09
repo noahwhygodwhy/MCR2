@@ -64,6 +64,8 @@ class CompoundTag;
 
 
 /*! \class SuperTag
+* \brief The all encompassing tag type. Every other tag is a subclass of this tag.
+* 
 * The all encompassing tag type. Every other tag is a subclass of this tag.
 * P O L Y M O R P H I C
 * Basically abstract, shouldn't really be initialized.
@@ -129,7 +131,7 @@ private:
 
 
 /*! \class Tag
-* A single value Tag of variable type. Basically just a container.
+* \brief A single value Tag of variable type. Basically just a container.
 */
 template <class T>
 class Tag : public SuperTag
@@ -161,7 +163,7 @@ private:
 };
 
 /*! \class TagArray
-* A multiple value Tag of a (single) variable type. Basically just a container for an array.
+* \brief A multiple value Tag of a (single) variable type. Basically just a container for an array.
 */
 template <class T>
 class TagArray : public SuperTag
@@ -197,7 +199,7 @@ private:
 
 
 /*! \class TagList
-* A list of tags themselves. The Tags are all the same type as defined by subType.
+* \brief A list of tags themselves. The Tags are all the same type as defined by subType.
 */
 class TagList : public SuperTag
 {
@@ -246,7 +248,7 @@ private:
 };
 
 /*! \class CompoundTag
-* Represents a compound tag. Has a mapping of names to various differen types of tags.
+* \brief Represents a compound tag. Has a mapping of names to various differen types of tags.
 */
 class CompoundTag : public SuperTag
 {

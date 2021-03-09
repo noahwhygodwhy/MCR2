@@ -109,7 +109,7 @@ enum BlockStateType
 
 
 /*! \struct Conditions
-*	A struct to map blockstate names to block conditions. It doens't *need* to be in a struct, but it helps keep it straight in my mind.
+*	\brief A struct to map blockstate names to block conditions. It doens't *need* to be in a struct, but it helps keep it straight in my mind.
 */
 struct Conditions
 {
@@ -117,7 +117,7 @@ struct Conditions
 };
 
 /*! \struct Conditional
-*	A struct to represent a conditional model. If any of the conditions in when are met, then model is the Model to be used.
+*	\brief A struct to represent a conditional model. If any of the conditions in when are met, then model is the Model to be used.
 */
 struct Conditional
 {
@@ -127,7 +127,7 @@ struct Conditional
 
 
 /*! \struct BlockState
-*	A struct to represent a blockstate. If type is MULTIPART, all Models for each conditional are used. Otherwise only the models who has a conditional that is true are used.
+*	\brief A struct to represent a blockstate. If type is MULTIPART, all Models for each conditional are used. Otherwise only the models who has a conditional that is true are used.
 *
 */
 struct BlockState
@@ -138,6 +138,8 @@ struct BlockState
 
 
 /*! \class Asset
+*	\brief A singleton style class that exists to parse a bunch of json files and provide the information for chunk creation.
+* 
 *	A singleton style class that exists to parse a bunch of json files and provide the information for chunk creation.
 *	Provides 3 primary maps:
 *	A map between minecraft textures, and their index in the "Large Texture Stack"

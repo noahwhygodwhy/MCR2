@@ -28,7 +28,7 @@ using namespace std::filesystem;
 
 
 /*! \struct Section
-	A structure to respresent a minecraft Section
+	\brief A structure to respresent a minecraft Section
 */
 struct Section
 {
@@ -37,10 +37,13 @@ struct Section
 };
 
 
+/*! \class Chunk
+*	\brief A class to represent a chunk in minecraft.
+*/
 class Chunk
 {
 public:
-	/*! \class Chunk
+	/*! \fn Chunk
 	* \param saveFolder The path to the "region" folder.
 	* \param chkx The global x coord of the chunk
 	* \param chkz The global z coord of the chunk

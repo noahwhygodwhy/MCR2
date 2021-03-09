@@ -26,6 +26,8 @@ enum class Direction {
 };
 
 /*! \class Camera
+* \brief A class to represent a "Camera" the best way you can in opengl.
+* 
 * A class to represent a "Camera" the best way you can in opengl.
 * It's basically a movable point with an forward and up vector that can provide
 * a view matrix on demand.

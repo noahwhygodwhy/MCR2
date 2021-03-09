@@ -16,7 +16,7 @@ using namespace std;
 using namespace glm;
 
 /*! \class Shader
-* A class to handle the reading, compilation, and use of glsl shaders.
+* \brief A class to handle the reading, compilation, and use of glsl shaders.
 */
 class Shader
 {
