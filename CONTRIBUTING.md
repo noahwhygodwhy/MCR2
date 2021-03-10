@@ -1,0 +1,1 @@
+As much as I would appreciate help on this project, I'm building this renderer as a personal challege, and to make myself more employable. So right now I am not looking for anyone else to write any code for it. Sorry. 
