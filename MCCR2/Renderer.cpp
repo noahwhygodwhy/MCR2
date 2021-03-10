@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <glm/glm.hpp>
 #include "Renderer.hpp"
+#include "AxisIndicator.hpp"
 
 
 using namespace std;
@@ -29,13 +30,27 @@ void frameBufferSizeCallback(GLFWwindow* window, int width, int height)
 	glViewport(0, 0, width, height);
 }
 
-void mouseCursorPossCallback(GLFWwindow* window, double xpos, double ypos)
-{
-	//cam.mouseInput(xpos, ypos, true);
-}
+double previousX;
+double previousY;
+
 
 void processInput(GLFWwindow* window, Camera& cam)
 {
+	double xpos, ypos;
+	glfwGetCursorPos(window, &xpos, &ypos);
+
+	int width, height;
+	glfwGetWindowSize(window, &width, &height);
+
+
+	//float start = glfwGetTime();
+	cam.mouseInput((xpos - previousX) , (previousY - ypos)/height*width, true);
+	//float end = glfwGetTime();
+	//printf("%f\n", end - start);
+
+	previousX = xpos;
+	previousY = ypos;
+
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 	{
 		glfwSetWindowShouldClose(window, true);
@@ -88,7 +103,7 @@ Renderer::Renderer(int x, int y)
 	layerCount = 0;
 	screenX = x;
 	screenY = y;
-	cam = Camera(vec3(0, 0, 0), vec3(0, 1, 0), 0, 0, 5, 1, 1);
+	cam = Camera(vec3(0, 0, 0), vec3(0, 1, 0), 0, 0, 5, 0.1f, 1);
 	window = glfwCreateWindow(x, y, "Title Goes here", NULL, NULL);
 }
 
@@ -243,6 +258,7 @@ GLFWwindow* Renderer::initializeOpenGL()
 
 	glfwMakeContextCurrent(window);
 	glfwSetFramebufferSizeCallback(window, frameBufferSizeCallback);
+	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
 	{
@@ -263,6 +279,10 @@ GLFWwindow* Renderer::initializeOpenGL()
 
 void Renderer::run(World& world, vec3 initPos)
 {
+
+	AxisIndicator ai(&cam);
+
+
 	cam.setPos(initPos);
 	world.givePos(cam.getPos());
 	glActiveTexture(GL_TEXTURE0);
@@ -282,20 +302,18 @@ void Renderer::run(World& world, vec3 initPos)
 
 	while (!glfwWindowShouldClose(window))
 	{
-		shader.use();
-
-		shader.setInt("foliageColorMap", 0);
-		shader.setInt("largeTextureStack", 1);
-
 		glClear(GL_COLOR_BUFFER_BIT);
 		glClear(GL_DEPTH_BUFFER_BIT);
-
-
 		float currentFrame = glfwGetTime();
 		deltaTime = currentFrame - lastFrame;
 		lastFrame = currentFrame;
 
 		processInput(window, cam);
+		shader.use();
+
+		shader.setInt("foliageColorMap", 0);
+		shader.setInt("largeTextureStack", 1);
+
 
 		mat4 view = cam.getView();
 		//mat4 view = lookAt(vec3(32 + sin(glfwGetTime()/10)*20, 85, 32+cos(glfwGetTime()/10)*20), vec3(32, 60, 32), vec3(0.0f, 1.0f, 0.0f));
@@ -304,11 +322,11 @@ void Renderer::run(World& world, vec3 initPos)
 		shader.setMatFour("projection", projection);
 
 		world.givePos(cam.getPos());
-
 		world.draw();
+		
 		//glDrawArrays(GL_TRIANGLES, 0, originChunk.size());
 		//glDrawArrays(GL_TRIANGLES, 0, originChunk.size());
-
+		ai.draw(projection, screenX, screenY);
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}

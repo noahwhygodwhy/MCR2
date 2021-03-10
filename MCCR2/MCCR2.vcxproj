@@ -146,6 +146,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <None Include="axisFragShader.glsl" />
+    <None Include="axisVertShader.glsl" />
     <None Include="fragShader.glsl" />
     <None Include="packages.config" />
     <None Include="vertShader.glsl" />
@@ -163,6 +165,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Asset.hpp" />
+    <ClInclude Include="AxisIndicator.hpp" />
     <ClInclude Include="Biomes.hpp" />
     <ClInclude Include="Camera.hpp" />
     <ClInclude Include="Chunk.hpp" />

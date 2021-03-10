@@ -58,18 +58,19 @@ void Camera::keyboardInput(Direction dir, float time)
 }
 void Camera::mouseInput(float x, float y, GLboolean cp = GL_TRUE)
 {
+	//printf("x: %f, y: %f\n", x, y);
 	yaw += x * mouseSensitivity;
 	pitch += y * mouseSensitivity;
 
 	if (cp)
 	{
-		if (pitch > 89.0f)
+		if (pitch > 80.0f)
 		{
-			pitch = 89.0f;
+			pitch = 80.0f;
 		}
-		if (pitch < -89.0f)
+		if (pitch < -80.0f)
 		{
-			pitch = -89.0f;
+			pitch = -80.0f;
 		}
 	}
 	updateVectors();

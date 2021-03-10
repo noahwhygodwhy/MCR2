@@ -89,6 +89,30 @@ fvec2 rotUV(fvec2 in, int rot)
 	{
 	case 90:
 		//printf("90 y rot\n");
+		out = fvec2(-out.y, out.x) + fvec2(1.0f, 0.0f);
+		break;
+	case 180:
+		//printf("180 y rot\n");
+		out = fvec2(-out.x, -out.y) + fvec2(1.0f, 1.0f);
+		break;
+	case 270:
+		//printf("270 y rot\n");
+		out = fvec2(out.y, -out.x) + fvec2(0.0f, 1.0f);
+		break;
+	default:
+		//printf("0 y rot\n");
+		break;
+	}
+	return out;// +fvec2(0.5f);
+}
+/*
+fvec2 rotUV(fvec2 in, int rot)
+{
+	fvec2 out = in;// -fvec2(0.5f);
+	switch (rot)
+	{
+	case 90:
+		//printf("90 y rot\n");
 		out = fvec2(-out.y, out.x);
 		break;
 	case 180:
@@ -104,12 +128,12 @@ fvec2 rotUV(fvec2 in, int rot)
 		break;
 	}
 	return out;// +fvec2(0.5f);
-}
+}*/
 
 fvec4 rotUVPair(fvec4 in, int rot)
 {
-	fvec2 first = rotUV(fvec2(in.w, in.x), rot);
-	fvec2 second = rotUV(fvec2(in.y, in.z), rot);
+	fvec2 first = rotUV(fvec2(in.x, in.y), rot);
+	fvec2 second = rotUV(fvec2(in.z, in.w), rot);
 	return fvec4(first.x, first.y, second.x, second.y);
 }
 
@@ -127,7 +151,7 @@ void printVec2(ivec2 in, string str)
 
 void printVec4(fvec4 in, string str)
 {
-	printf("%s: %f,%f,%f,%f\n", str.c_str(), in.w, in.x, in.y, in.z);
+	printf("%s: %f,%f,%f,%f\n", str.c_str(), in.x, in.y, in.z, in.w);
 }
 
 //TODO: this is what sets up the UVs, so when it's wrong, this is to blame
@@ -136,6 +160,11 @@ void addFace(vector<Vert>& verts, const vec3& ax, const vec3& bx, const vec3& cx
 	//printf("blockRot: %i, uvRot: %i, uvLock: %s", blockRotation, uvRotation, uvLock?"true":"false");
 	fvec4 uv = uvIn / 16.0f;
 	
+
+
+	printf("#uvRotation: %i\n", uvRotation);
+	printf("#blockRotation: %i\n", blockRotation);
+	printf("#uvlock: %s\n", uvLock?"true":"false");
 	printVec4(uv, "pre rotation uv");
 
 	vec3 a = ax;
@@ -172,28 +201,43 @@ void addFace(vector<Vert>& verts, const vec3& ax, const vec3& bx, const vec3& cx
 	//TODO: fix this
 	int totalRotation = uvRotation;
 
-	if (uvLock)
+	if (!uvLock)
 	{
 		totalRotation -= blockRotation;
 	}
+	//totalRotation -= blockRotation;
 	totalRotation = (totalRotation + 360) % 360;//gotta make sure it's positive
 	
+	printf("total rotatioN: %i\n", totalRotation);
+
+	//uv = rotUVPair(uv, totalRotation);
+
+	printVec4(uv, "post rotation uv");
 
 
-	fvec2 uv00 = fvec2(uv.x, uv.y);
-	fvec2 uv01 = fvec2(uv.x, uv.w);
-	fvec2 uv11 = fvec2(uv.z, uv.w);
-	fvec2 uv10 = fvec2(uv.z, uv.y);
+
+	fvec2 uv00 = fvec2(uv.y, uv.z);
+	fvec2 uv01 = fvec2(uv.y, uv.x);
+	fvec2 uv11 = fvec2(uv.w, uv.x);
+	fvec2 uv10 = fvec2(uv.w, uv.z);
+
+
+	//TODO: This is the correctish version
+	//fvec2 uv00 = fvec2(uv.x, uv.y);
+	//fvec2 uv01 = fvec2(uv.x, uv.w);
+	//fvec2 uv11 = fvec2(uv.z, uv.w);
+	//fvec2 uv10 = fvec2(uv.z, uv.y);
+
 	//printf("\n");
 	//printf("texture rotation is %i\n", texRotation);
 
-	//uv00 = rotUV(uv00, totalRotation);
-	//uv01 = rotUV(uv01, totalRotation);
-	//uv11 = rotUV(uv11, totalRotation);
-	//uv10 = rotUV(uv10, totalRotation);
+	uv00 = rotUV(uv00, totalRotation);
+	uv01 = rotUV(uv01, totalRotation);
+	uv11 = rotUV(uv11, totalRotation);
+	uv10 = rotUV(uv10, totalRotation);
 	
 
-	printVec4(fvec4(uv00.x, uv00.y, uv10.y, uv10.x), "post rotation uv");
+	//printVec4(fvec4(uv00.x, uv00.y, uv10.y, uv10.x), "post rotation uv");
 	//printf("adding face with tintUV %f,%f\n", tintUV2.x, tintUV2.y);
 	Vert v00(a, uv00, tintUV2, texture);
 	Vert v01(b, uv01, tintUV2, texture);
@@ -388,23 +432,24 @@ void Chunk::generateVertices(const array<Section*, 20>& sections, const array<ar
 								}
 								if (block.faces & 0b00001000 && !(e.east.cullFace & 0b11000000))//+x
 								{
-									printf("adding right face\n");
-									addFace(this->verts, npn, nnn, nnp, npp, e.east.uv, e.east.rotation, e.yRot % 180 == 90 ? 0 : e.xRot, e.uvLock, e.east.texture, e.east.tintIndex, tintUV, block.coords);
+									printf("adding into screen face\n");
+									addFace(this->verts, npn, nnn, nnp, npp, e.east.uv, e.east.rotation, (e.yRot % 180 == 0) ? 0 : e.xRot, e.uvLock, e.east.texture, e.east.tintIndex, tintUV, block.coords);
 								}
 								if (block.faces & 0b00000100 && !(e.west.cullFace & 0b11000000))//-x
 								{
-									printf("adding left face\n");
-									addFace(this->verts, ppp, pnp, pnn, ppn, e.west.uv, e.west.rotation, e.yRot % 180 == 90 ? 0 : e.xRot, e.uvLock, e.west.texture, e.west.tintIndex, tintUV, block.coords);
+									printf("adding out of screen face---3##33523523\n");
+									printf("#uvRotation: %i\n", e.west.rotation);
+									addFace(this->verts, ppp, pnp, pnn, ppn, e.west.uv, e.west.rotation, (e.yRot % 180 == 0) ? 0 : e.xRot, e.uvLock, e.west.texture, e.west.tintIndex, tintUV, block.coords);
 								}
 								if (block.faces & 0b00000010 && !(e.south.cullFace & 0b11000000))//+z
 								{
-									printf("adding towards screen face\n");
-									addFace(this->verts, npp, nnp, pnp, ppp, e.south.uv, e.south.rotation, e.yRot % 180 == 0 ? 0 : e.xRot, e.uvLock, e.south.texture, e.south.tintIndex, tintUV, block.coords);
+									printf("adding left\n");
+									addFace(this->verts, npp, nnp, pnp, ppp, e.south.uv, e.south.rotation, (e.yRot % 180 == 90) ? 0 : e.xRot, e.uvLock, e.south.texture, e.south.tintIndex, tintUV, block.coords);
 								}
 								if (block.faces & 0b00000001 && !(e.north.cullFace & 0b11000000))//-z
 								{
-									printf("adding away from screen face\n");
-									addFace(this->verts, ppn, pnn, nnn, npn, e.north.uv, e.north.rotation, e.yRot % 180 == 0 ? 0 : e.xRot, e.uvLock, e.north.texture, e.north.tintIndex, tintUV, block.coords);
+									printf("adding right\n");
+									addFace(this->verts, ppn, pnn, nnn, npn, e.north.uv, e.north.rotation, (e.yRot % 180 == 90) ? 0 : e.xRot, e.uvLock, e.north.texture, e.north.tintIndex, tintUV, block.coords);
 								}
 							}
 						}

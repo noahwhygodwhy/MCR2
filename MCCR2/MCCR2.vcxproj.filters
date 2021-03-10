@@ -13,14 +13,23 @@
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
+    <Filter Include="Source Files\shaders">
+      <UniqueIdentifier>{f47d4c70-9264-45ba-b24f-15672097a93d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
     <None Include="fragShader.glsl">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\shaders</Filter>
     </None>
     <None Include="vertShader.glsl">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\shaders</Filter>
+    </None>
+    <None Include="axisFragShader.glsl">
+      <Filter>Source Files\shaders</Filter>
+    </None>
+    <None Include="axisVertShader.glsl">
+      <Filter>Source Files\shaders</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -75,6 +84,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Biomes.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AxisIndicator.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
