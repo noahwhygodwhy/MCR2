@@ -13,7 +13,4 @@ Application flow is as follows:
 2. The Renderer is used to load all textures.
 3. An "Asset" is created, parses all model/blockstate jsons, and is given the mapping of texture names to texture indicies.
 4. A "World" is created, and begins loading chunks, does so with threads to not hold up main thread.
-5. The Renderer draw loop starts. This involves
-  a. Processing input (WASD/QE/SPACE/SHIFT.
-  b. Setting transformation/view/projection matrix uniforms in the shader.
-  c. Drawing each chunk.
+5. The Renderer draw loop starts. This involves, processing input (WASD/QE/SPACE/SHIFT, setting transformation/view/projection matrix uniforms in the shader, and drawing each chunk.
