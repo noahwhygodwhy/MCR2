@@ -82,10 +82,9 @@ vec3 scaleAroundCenter(float factor, vec3 b)
 	return vec3(0.5f) + ((b - vec3(0.5f))*factor);
 }
 
-
 fvec2 rotUV(fvec2 in, int rot)
 {
-	fvec2 out = in - fvec2(0.5f);
+	fvec2 out = in;// -fvec2(0.5f);
 	switch (rot)
 	{
 	case 90:
@@ -104,14 +103,40 @@ fvec2 rotUV(fvec2 in, int rot)
 		//printf("0 y rot\n");
 		break;
 	}
-	return out + fvec2(0.5f);
+	return out;// +fvec2(0.5f);
+}
+
+fvec4 rotUVPair(fvec4 in, int rot)
+{
+	fvec2 first = rotUV(fvec2(in.w, in.x), rot);
+	fvec2 second = rotUV(fvec2(in.y, in.z), rot);
+	return fvec4(first.x, first.y, second.x, second.y);
+}
+
+
+
+
+void printVec2(fvec2 in, string str)
+{
+	printf("%s, %f,%f\n", str.c_str(), in.x, in.y);
+}
+void printVec2(ivec2 in, string str)
+{
+	printf("%s, %i,%i\n", str.c_str(), in.x, in.y);
+}
+
+void printVec4(fvec4 in, string str)
+{
+	printf("%s: %f,%f,%f,%f\n", str.c_str(), in.w, in.x, in.y, in.z);
 }
 
 //TODO: this is what sets up the UVs, so when it's wrong, this is to blame
-void addFace(vector<Vert>& verts, const vec3& ax, const vec3& bx, const vec3& cx, const vec3& dx, vec4 uv, int uvRotation, int blockRotation, bool uvLock, int texture, int tintIndex, vec2 tintUV, const vec3& blockCoords)
+void addFace(vector<Vert>& verts, const vec3& ax, const vec3& bx, const vec3& cx, const vec3& dx, fvec4 uvIn, int uvRotation, int blockRotation, bool uvLock, int texture, int tintIndex, vec2 tintUV, const vec3& blockCoords)
 {
 	//printf("blockRot: %i, uvRot: %i, uvLock: %s", blockRotation, uvRotation, uvLock?"true":"false");
-
+	fvec4 uv = uvIn / 16.0f;
+	
+	printVec4(uv, "pre rotation uv");
 
 	vec3 a = ax;
 	vec3 b = bx;
@@ -143,12 +168,6 @@ void addFace(vector<Vert>& verts, const vec3& ax, const vec3& bx, const vec3& cx
 	d += blockCoords;
 
 
-	fvec2 uv00 = fvec2(uv.x, uv.y) / 16.0f;
-	fvec2 uv01 = fvec2(uv.x, uv.w) / 16.0f;
-	fvec2 uv11 = fvec2(uv.z, uv.w) / 16.0f;
-	fvec2 uv10 = fvec2(uv.z, uv.y) / 16.0f;
-	//printf("\n");
-	//printf("texture rotation is %i\n", texRotation);
 
 	//TODO: fix this
 	int totalRotation = uvRotation;
@@ -157,20 +176,24 @@ void addFace(vector<Vert>& verts, const vec3& ax, const vec3& bx, const vec3& cx
 	{
 		totalRotation -= blockRotation;
 	}
-	/*if (!uvLock)
-	{
-		totalRotation += blockRotation;
-	}*/
-
 	totalRotation = (totalRotation + 360) % 360;//gotta make sure it's positive
-	//printf(", total rotation %i\n", totalRotation);
-
-	uv00 = rotUV(uv00, totalRotation);
-	uv01 = rotUV(uv01, totalRotation);
-	uv11 = rotUV(uv11, totalRotation);
-	uv10 = rotUV(uv10, totalRotation);
 	
 
+
+	fvec2 uv00 = fvec2(uv.x, uv.y);
+	fvec2 uv01 = fvec2(uv.x, uv.w);
+	fvec2 uv11 = fvec2(uv.z, uv.w);
+	fvec2 uv10 = fvec2(uv.z, uv.y);
+	//printf("\n");
+	//printf("texture rotation is %i\n", texRotation);
+
+	//uv00 = rotUV(uv00, totalRotation);
+	//uv01 = rotUV(uv01, totalRotation);
+	//uv11 = rotUV(uv11, totalRotation);
+	//uv10 = rotUV(uv10, totalRotation);
+	
+
+	printVec4(fvec4(uv00.x, uv00.y, uv10.y, uv10.x), "post rotation uv");
 	//printf("adding face with tintUV %f,%f\n", tintUV2.x, tintUV2.y);
 	Vert v00(a, uv00, tintUV2, texture);
 	Vert v01(b, uv01, tintUV2, texture);
@@ -295,17 +318,17 @@ void Chunk::generateVertices(const array<Section*, 20>& sections, const array<ar
 					{
 						if (block.model != "block/air" && block.model != "block/void_air" && block.model != "block/cave_air" && block.model != "NULL") //TODO: needs to include other types of air too
 						{
-							//printf("-----------------------------\nverticizing %s\n", block.model.c_str());
+							printf("================================\nverticizing %s\n", block.model.c_str());
 							for (const Element& e : block.elements)
 							{
-
+								printf("\n");
 
 								//mat4 rm = eulerAngleXY(e.xRot, e.yRot);
 								mat4 rm(1.0);
 								rm = rotate(rm, (float)radians((float)e.xRot), vec3(-1, 0, 0));
 								rm = rotate(rm, (float)radians((float)e.yRot), vec3(0, -1, 0));
 
-								//printf("xrot: %i, yrot: %i\n", e.xRot, e.yRot);
+								printf("block xrot: %i, yrot: %i\n", e.xRot, e.yRot);
 
 								vec3 adjTo = adjust(e.to);
 								vec3 adjFrom = adjust(e.from);
@@ -355,26 +378,32 @@ void Chunk::generateVertices(const array<Section*, 20>& sections, const array<ar
 
 								if (block.faces & 0b00100000 && !(e.up.cullFace & 0b11000000))//+y
 								{
+									printf("adding top face\n");
 									addFace(this->verts, npn, npp, ppp, ppn, e.up.uv, e.up.rotation, e.yRot, e.uvLock, e.up.texture, e.up.tintIndex, tintUV, block.coords);
 								}
 								if (block.faces & 0b00010000 && !(e.down.cullFace & 0b11000000))//-y
 								{
+									printf("adding bottom face\n");
 									addFace(this->verts, nnp, nnn, pnn, pnp, e.down.uv, e.down.rotation, e.yRot, e.uvLock, e.down.texture, e.down.tintIndex, tintUV, block.coords);
 								}
 								if (block.faces & 0b00001000 && !(e.east.cullFace & 0b11000000))//+x
 								{
+									printf("adding right face\n");
 									addFace(this->verts, npn, nnn, nnp, npp, e.east.uv, e.east.rotation, e.yRot % 180 == 90 ? 0 : e.xRot, e.uvLock, e.east.texture, e.east.tintIndex, tintUV, block.coords);
 								}
-								if (block.faces & 0b00000100 && !(e.west.cullFace & 0b11000000))//-x oor maybe the x's were backwards, i switched the bits
+								if (block.faces & 0b00000100 && !(e.west.cullFace & 0b11000000))//-x
 								{
+									printf("adding left face\n");
 									addFace(this->verts, ppp, pnp, pnn, ppn, e.west.uv, e.west.rotation, e.yRot % 180 == 90 ? 0 : e.xRot, e.uvLock, e.west.texture, e.west.tintIndex, tintUV, block.coords);
 								}
 								if (block.faces & 0b00000010 && !(e.south.cullFace & 0b11000000))//+z
 								{
+									printf("adding towards screen face\n");
 									addFace(this->verts, npp, nnp, pnp, ppp, e.south.uv, e.south.rotation, e.yRot % 180 == 0 ? 0 : e.xRot, e.uvLock, e.south.texture, e.south.tintIndex, tintUV, block.coords);
 								}
 								if (block.faces & 0b00000001 && !(e.north.cullFace & 0b11000000))//-z
 								{
+									printf("adding away from screen face\n");
 									addFace(this->verts, ppn, pnn, nnn, npn, e.north.uv, e.north.rotation, e.yRot % 180 == 0 ? 0 : e.xRot, e.uvLock, e.north.texture, e.north.tintIndex, tintUV, block.coords);
 								}
 							}

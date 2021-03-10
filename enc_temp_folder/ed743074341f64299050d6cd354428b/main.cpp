@@ -25,7 +25,7 @@
 
 
 #ifdef TEST
-#define INIT_POS vec3(1, 2, 4);
+#define INIT_POS vec3(1, 4, 4);
 string saveFolder = "C:/Users/noahm/AppData/Roaming/.minecraft/saves/New World2";
 int radius = 0;
 #else
