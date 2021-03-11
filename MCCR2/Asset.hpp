@@ -7,13 +7,13 @@
 #ifndef ASSET_H
 #define ASSET_H
 #include <vector>
-#include <string>
 #include <unordered_map>
 #include <string_view>
 #include "json.hpp"
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include "Config.h"
 
 using namespace std;
 

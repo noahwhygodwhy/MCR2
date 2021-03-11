@@ -89,5 +89,8 @@
     <ClInclude Include="AxisIndicator.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Config.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

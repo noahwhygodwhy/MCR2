@@ -19,6 +19,7 @@
 #include <string>
 #include <vector>
 #include "World.hpp"
+#include "Config.h"
 
 #include "stb_image.h"
 

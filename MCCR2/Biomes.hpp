@@ -9,6 +9,7 @@
 
 
 #include <string>
+#include "Config.h"
 
 
 //TODO: change when minecraft 1.17 arives

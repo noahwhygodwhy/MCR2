@@ -22,7 +22,7 @@ string fileToString(string filename)
     content.resize(length);
     stream.read(content.data(), length);
     printf("returning\n");
-    cout << content << endl;
+    printf("%s\n", content.c_str());
     return content;
     //stream.close();
     //return content;

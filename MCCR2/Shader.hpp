@@ -11,6 +11,7 @@
 #include <fstream>
 #include <sstream>
 #include <iostream>
+#include "Config.h"
 
 using namespace std;
 using namespace glm;

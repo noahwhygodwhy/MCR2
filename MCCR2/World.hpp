@@ -8,6 +8,7 @@
 #include "Chunk.hpp"
 #include <queue>
 #include <mutex> 
+#include "Config.h"
 
 
 using namespace std;

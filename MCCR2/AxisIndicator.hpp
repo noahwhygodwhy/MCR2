@@ -7,6 +7,7 @@
 #include <string>
 #include "Camera.hpp"
 #include <vector>
+#include "Config.h"
 using namespace std;
 
 /*! \class AxisIndicator.hpp

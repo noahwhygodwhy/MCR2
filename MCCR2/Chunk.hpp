@@ -17,6 +17,7 @@
 #include "Asset.hpp"
 #include <thread>
 #include "glm/ext.hpp"
+#include "Config.h"
 
 //#include "World.hpp"
 

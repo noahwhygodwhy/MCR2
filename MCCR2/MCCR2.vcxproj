@@ -169,6 +169,7 @@
     <ClInclude Include="Biomes.hpp" />
     <ClInclude Include="Camera.hpp" />
     <ClInclude Include="Chunk.hpp" />
+    <ClInclude Include="Config.h" />
     <ClInclude Include="NBTTags.hpp" />
     <ClInclude Include="Renderer.hpp" />
     <ClInclude Include="Shader.hpp" />

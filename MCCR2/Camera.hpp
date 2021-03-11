@@ -9,6 +9,7 @@
 #include "Asset.hpp"
 #include "glad.h"
 #include <GLFW/glfw3.h>
+#include "Config.h"
 
 using namespace std;
 using namespace glm;

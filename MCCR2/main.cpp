@@ -2,6 +2,8 @@
 */
 
 
+//constexpr function (sfm, ...)printf = (void*)0;
+
 /*! \mainpage Minecraft Renderer Attempt Number 2
  *This is a minecraft renderer using opengl 4.6. Super early development. It is starting to work. Main issue rn are texture UVs and the handling of tint overlays. Z fighting in distant grass. Just fixed block rotation and grass biome color calculation. Taking a break and working on documentation. https://noahwhygodwhy.github.io/MCR2/ Accessing certain pages doesn't work as doxygen likes to put underscores at the front of some html file names. WIP :\
  *
@@ -13,44 +15,50 @@
 #define GLM_FORCE_RADIANS
 //#define GLM_FORCE_DEPTH_ZERO_TO_ONE
 //#include <glm/glm.hpp>
+
+
 #include "Renderer.hpp"
-#include <iostream>
 #include "Chunk.hpp"
 #include <string>
 #include "Asset.hpp"
+#include "Config.h"
+#include <iostream>
+
+using namespace std;
+using namespace glm;
+
+//#define TEST
 
 
-#define TEST
+
 
 
 
 #ifdef TEST
 #define INIT_POS vec3(1, 2, 4);
-string saveFolder = "C:/Users/noahm/AppData/Roaming/.minecraft/saves/New World2";
-int radius = 0;
+saveFolder = "C:/Users/noahm/AppData/Roaming/.minecraft/saves/New World2";
+radius = 0;
 #else
 #define INIT_POS vec3(1, 64, 1)
 string saveFolder = "D:/OneDrive/Personal/MCCR2/New World";
 int radius = 5;
 #endif
 
-
-using namespace std;
-using namespace glm;
-
-
 int main(void)
 {
 
+/*#ifndef TEST
+	std::fclose(stdout);
+#endif*/
 
+	printf("hello world\n");
+	
 	vec3 initPos = INIT_POS;
 
 
 	Renderer r(1920, 1080);
 
 	r.initializeOpenGL();
-
-
 
 	Asset* ass = new Asset(r.loadTextures(TEXTURE_DIR_PATH));
 	World w(saveFolder + "/region", ass, radius, initPos.x, initPos.z);
