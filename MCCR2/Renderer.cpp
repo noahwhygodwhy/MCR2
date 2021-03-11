@@ -300,7 +300,7 @@ GLFWwindow* Renderer::initializeOpenGL()
 	}
 
 	shader = Shader("vertShader.glsl", "fragShader.glsl");
-
+	stbi_set_flip_vertically_on_load(true);
 	glEnable(GL_CULL_FACE);
 	glEnable(GL_FRAMEBUFFER_SRGB);
 	glEnable(GL_DEPTH_TEST);

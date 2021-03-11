@@ -161,7 +161,6 @@ void addFace(vector<Vert>& verts, const vec3& ax, const vec3& bx, const vec3& cx
 	fvec4 uv = uvIn / 16.0f;
 	
 
-
 	printf("#uvRotation: %i\n", uvRotation);
 	printf("#blockRotation: %i\n", blockRotation);
 	printf("#uvlock: %s\n", uvLock?"true":"false");
@@ -200,7 +199,7 @@ void addFace(vector<Vert>& verts, const vec3& ax, const vec3& bx, const vec3& cx
 
 	//TODO: fix this
 	int totalRotation = uvRotation;
-	totalRotation += blockRotation;
+	totalRotation -= blockRotation;
 
 	if (false && !uvLock)
 	{
@@ -212,10 +211,8 @@ void addFace(vector<Vert>& verts, const vec3& ax, const vec3& bx, const vec3& cx
 	printf("total rotatioN: %i\n", totalRotation);
 
 
-	for (vec2 f : {fvec2(uv.x, uv.y), fvec2(uv.x, uv.w), fvec2(uv.z, uv.w), fvec2(uv.z, uv.y)})
-	{
-		printVec2(f, "pre rotation uv");
-	}
+	//for (vec2 f : {fvec2(uv.x, uv.y), fvec2(uv.x, uv.w), fvec2(uv.z, uv.w), fvec2(uv.z, uv.y)})
+	//{printVec2(f, "pre rotation uv");}
 
 	//uv = rotUVPair(uv, totalRotation);
 
@@ -223,7 +220,7 @@ void addFace(vector<Vert>& verts, const vec3& ax, const vec3& bx, const vec3& cx
 	fvec2 uv01 = fvec2(uv.x, uv.w);
 	fvec2 uv11 = fvec2(uv.z, uv.w);
 	fvec2 uv10 = fvec2(uv.z, uv.y);
-	//printVec4(uv, "post rotation uv");
+	printVec4(uv, "post rotation uv");
 
 
 
@@ -234,10 +231,7 @@ void addFace(vector<Vert>& verts, const vec3& ax, const vec3& bx, const vec3& cx
 	uv10 = rotUV(uv10, totalRotation);
 
 	
-	for (vec2 f : {uv00, uv01, uv11, uv10})
-	{
-		printVec2(f, "post rotation uv");
-	}
+	//for (vec2 f : {uv00, uv01, uv11, uv10}){printVec2(f, "post rotation uv");}
 	
 
 	/*fvec2 uv00 = fvec2(uv.x, uv.y);
@@ -413,33 +407,35 @@ void Chunk::generateVertices(const array<Section*, 20>& sections, const array<ar
 
 								if (block.faces & 0b00100000 && !(e.up.cullFace & 0b11000000))//+y (up)
 								{
-									printf("adding face +y up");
-									addFace(this->verts, npn, npp, ppp, ppn, vec4(e.up.uv00, e.up.uv11), e.up.rotation+180, e.yRot, e.uvLock, e.up.texture, e.up.tintIndex, tintUV, block.coords);
+									//printf("adding face +y up\n");
+									addFace(this->verts, npn, npp, ppp, ppn, vec4(e.up.uv00, e.up.uv11), e.up.rotation, e.yRot, e.uvLock, e.up.texture, e.up.tintIndex, tintUV, block.coords);
 								}
 								if (block.faces & 0b00010000 && !(e.down.cullFace & 0b11000000))//-y (down)
 								{
-									printf("adding face -y down");
-									addFace(this->verts, nnp, nnn, pnn, pnp, vec4(e.down.uv00, e.down.uv11), e.down.rotation, e.yRot, e.uvLock, e.down.texture, e.down.tintIndex, tintUV, block.coords);
+									//printf("adding face -y down\n");
+									addFace(this->verts, nnp, nnn, pnn, pnp, vec4(e.down.uv00, e.down.uv11), e.down.rotation+180, e.yRot, e.uvLock, e.down.texture, e.down.tintIndex, tintUV, block.coords);
 								}
-								if (block.faces & 0b00001000 && !(e.east.cullFace & 0b11000000))//+x (east)
+								if (block.faces & 0b00001000 && !(e.east.cullFace & 0b11000000))//opengl-x minecraft+x (east)
 								{
-									printf("adding face +x east");
-									addFace(this->verts, npn, nnn, nnp, npp, vec4(e.east.uv00, e.east.uv11), e.east.rotation, (e.yRot % 180 == 0) ? 0 : e.xRot, e.uvLock, e.east.texture, e.east.tintIndex, tintUV, block.coords);
+									//printf("adding face -x east\n");
+									addFace(this->verts, npn, nnn, nnp, npp, vec4(e.east.uv00, e.east.uv11), e.east.rotation, 0, e.uvLock, e.east.texture, e.east.tintIndex, tintUV, block.coords);
 								}
-								if (block.faces & 0b00000100 && !(e.west.cullFace & 0b11000000))//-x (west)
+								if (block.faces & 0b00000100 && !(e.west.cullFace & 0b11000000))//opengl+x minecraft-x (west)
 								{
-									printf("adding face -x west");
-									addFace(this->verts, ppp, pnp, pnn, ppn, vec4(e.west.uv00, e.west.uv11), e.west.rotation, (e.yRot % 180 == 0) ? 0 : e.xRot, e.uvLock, e.west.texture, e.west.tintIndex, tintUV, block.coords);
+									printf("-----\n");
+									printf("adding face +x west\n");
+									addFace(this->verts, ppp, pnp, pnn, ppn, vec4(e.west.uv00, e.west.uv11), e.west.rotation, 0, e.uvLock, e.west.texture, e.west.tintIndex, tintUV, block.coords);
+									printf("-----\n");
 								}
-								if (block.faces & 0b00000010 && !(e.north.cullFace & 0b11000000))//+z (north)
+								if (block.faces & 0b00000010 && !(e.north.cullFace & 0b11000000))//opengl-z minecraft+z (north)
 								{
-									printf("adding face +z north");
-									addFace(this->verts, npp, nnp, pnp, ppp, vec4(e.north.uv00, e.north.uv11), e.north.rotation, (e.yRot % 180 == 90) ? 0 : e.xRot, e.uvLock, e.north.texture, e.north.tintIndex, tintUV, block.coords);
+									//printf("adding face -z north\n");
+									addFace(this->verts, ppn, pnn, nnn, npn, vec4(e.north.uv00, e.north.uv11), e.north.rotation, 0, e.uvLock, e.north.texture, e.north.tintIndex, tintUV, block.coords);
 								}
-								if (block.faces & 0b00000001 && !(e.north.cullFace & 0b11000000))//-z (south)
+								if (block.faces & 0b00000001 && !(e.north.cullFace & 0b11000000))//opengl+z minecraft-z (south)
 								{
-									printf("adding face -z south");
-									addFace(this->verts, ppn, pnn, nnn, npn, vec4(e.south.uv00, e.south.uv11), e.south.rotation, (e.yRot % 180 == 90) ? 0 : e.xRot, e.uvLock, e.south.texture, e.south.tintIndex, tintUV, block.coords);
+									//printf("adding face +z south\n");
+									addFace(this->verts, npp, nnp, pnp, ppp, vec4(e.south.uv00, e.south.uv11), e.south.rotation, 0, e.uvLock, e.south.texture, e.south.tintIndex, tintUV, block.coords);
 								}
 							}
 						}

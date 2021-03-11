@@ -39,10 +39,25 @@ void initChunk(Chunk* c, World* w)
 void World::adjustLoadedChunks()
 {
 	vector<Chunk*> chunksToGet;
+#ifdef TEST
+
+	if (this->chunks.count(ivec2(0, 0)) == 0)
+	{
+		Chunk* toAdd = new Chunk(this->saveFolder, 0, 0, this->ass);
+		chunksToGet.push_back(toAdd);
+		this->chunks.insert({ ivec2(0,0), pair(true,  toAdd) });
+	}
+	else
+	{
+		this->chunks[ivec2(0,0)].first = true;
+	}
+#else
+
 	for (int x = this->chkx - this->range; x <= this->chkx + this->range; x++)
 	{
 		for (int z = this->chkz - this->range; z <= this->chkz + this->range; z++)
 		{
+			if(x && z != 0)
 			//printf("world loading chunk %i,%i\n", x, z);
 			if (this->chunks.count(ivec2(x, z)) == 0)
 			{
@@ -63,6 +78,7 @@ void World::adjustLoadedChunks()
 		}
 	}
 
+#endif
 
 
 	//TODO: reenable threading
@@ -80,7 +96,7 @@ void World::adjustLoadedChunks()
 	}
 
 
-
+#ifndef TEST
 	for (pair<vec2, pair<bool, Chunk*>> c : this->chunks)
 	{
 		if (abs(c.first.x) - this->chkx > 1 || abs(c.first.y) - this->chkz > 1)
@@ -92,6 +108,7 @@ void World::adjustLoadedChunks()
 			c.second.first = true;
 		}
 	}
+#endif
 }
 
 void World::givePos(ivec3 pos)
@@ -100,7 +117,7 @@ void World::givePos(ivec3 pos)
 	int newchkz = pos.z > 0 ? pos.z / 16 : ((pos.z - 1) / 16) - 1;
 	if (newchkx != this->chkx || newchkz != this->chkz)
 	{
-		printf("moved to a new chunk from %i,%i to %i,%i\n", chkx, chkz, newchkx, newchkz);
+		//printf("moved to a new chunk from %i,%i to %i,%i\n", chkx, chkz, newchkx, newchkz);
 		this->chkx = newchkx;
 		this->chkz = newchkz;
 		this->adjustLoadedChunks();
@@ -113,13 +130,13 @@ void World::draw()
 	queueLocker.lock();
 	while (!bufferQueue.empty())
 	{
-		
 		bufferQueue.front()->bufferData();
 		bufferQueue.front()->drawable = true;
 		printf("buffered %i, %i\n", bufferQueue.front()->chkx, bufferQueue.front()->chkz);
 
 		//printf("buffering %i,%i\n", bufferQueue.front()->chkx, bufferQueue.front()->chkz);
 		bufferQueue.pop();
+
 	}
 	queueLocker.unlock();
 	for (pair<vec2, pair<bool, Chunk*>> c : this->chunks)
