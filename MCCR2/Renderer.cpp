@@ -348,7 +348,6 @@ void Renderer::run(World& world, vec3 initPos)
 		shader.setInt("largeTextureStack", 1);
 
 		//mat4 transform = scale(mat4(1.0), vec3(-1, 1, -1));
-		shader.setMatFour("transform", transform);
 
 
 		mat4 view = cam.getView();
