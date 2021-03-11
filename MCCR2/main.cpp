@@ -36,8 +36,8 @@ using namespace glm;
 
 #ifdef TEST
 #define INIT_POS vec3(1, 2, 4);
-saveFolder = "C:/Users/noahm/AppData/Roaming/.minecraft/saves/New World2";
-radius = 0;
+string saveFolder = "C:/Users/noahm/AppData/Roaming/.minecraft/saves/New World2";
+int radius = 0;
 #else
 #define INIT_POS vec3(1, 64, 1)
 string saveFolder = "D:/OneDrive/Personal/MCCR2/New World";

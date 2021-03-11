@@ -76,4 +76,9 @@ private:
 	*/
 	float normalizeTexture(const int& texID);
 };
+
+
+void createTexture(unsigned int* texture, string path, int wantedChannels = 4);
+
+
 #endif;

@@ -8,7 +8,7 @@ using namespace std;
 using namespace glm;
 
 
-//#define TEST
+#define TEST
 
 
 #ifndef TEST

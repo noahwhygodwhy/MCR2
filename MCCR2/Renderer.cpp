@@ -116,6 +116,37 @@ float Renderer::normalizeTexture(const int& texID)
 
 
 
+void createTexture(unsigned int* texture, string path, int wantedChannels)
+{
+	int width, height, channels;
+	glGenTextures(1, texture);
+	glBindTexture(GL_TEXTURE_2D, *texture);
+
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+	unsigned char* data = stbi_load(path.c_str(), &width, &height, &channels, wantedChannels);
+
+
+	//glTexStorage2D(GL_TEXTURE_2D, 1, GL_SRGB8_ALPHA8, width, height);
+	//printf("it has %i channels\n", channels);
+	if (data == NULL)
+	{
+		fprintf(stderr, "image not loaded\n");
+		fprintf(stderr, "%s\n", path.c_str());
+		exit(-1);
+	}
+
+
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+
+	stbi_image_free(data);
+}
+
 
 
 
@@ -125,8 +156,12 @@ unordered_map<string, int> Renderer::loadTextures(string path)
 	printf("starting to load textures\n");
 	fflush(stdout);
 	glActiveTexture(GL_TEXTURE0);
-	glGenTextures(1, &(this->foliageColorMap));
+
+	createTexture(&foliageColorMap, path + string("colormap/foliage.png"), 3);
+
+	/*glGenTextures(1, &(this->foliageColorMap));
 	glBindTexture(GL_TEXTURE_2D, this->foliageColorMap);
+
 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
@@ -134,10 +169,10 @@ unordered_map<string, int> Renderer::loadTextures(string path)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
+
 	int width, height, channels;
 
 	unsigned char* data = stbi_load((path+string("colormap/foliage.png")).c_str(), &width, &height, &channels, 3);
-
 
 
 	//glTexStorage2D(GL_TEXTURE_2D, 1, GL_SRGB8_ALPHA8, width, height);
@@ -157,9 +192,10 @@ unordered_map<string, int> Renderer::loadTextures(string path)
 
 	stbi_image_free(data);
 
-	printf("foliage image loaded\n");
+	printf("foliage image loaded\n");*/
 
 
+	int width, height, channels;
 
 	unordered_map<string, int> toReturn;
 	directory_iterator textureDir(path + "block/");
@@ -202,7 +238,7 @@ unordered_map<string, int> Renderer::loadTextures(string path)
 	}
 
 	printf("all images in sixteenImages\n");
-	int32_t mipLevelCount = 1;//maybe eventually fix?
+	int32_t mipLevelCount = 3;//maybe eventually fix?
 	width = 16;
 	height = 16;
 	layerCount = sixteenImages.size();
@@ -311,9 +347,11 @@ void Renderer::run(World& world, vec3 initPos)
 		shader.setInt("foliageColorMap", 0);
 		shader.setInt("largeTextureStack", 1);
 
+		mat4 transform = scale(mat4(1.0), vec3(-1, 1, -1));
+		shader.setMatFour("transform", transform);
+
 
 		mat4 view = cam.getView();
-		//mat4 view = lookAt(vec3(32 + sin(glfwGetTime()/10)*20, 85, 32+cos(glfwGetTime()/10)*20), vec3(32, 60, 32), vec3(0.0f, 1.0f, 0.0f));
 		shader.setMatFour("view", view);
 		mat4 projection = perspective(radians(70.0f), (float)screenX / (float)screenY, 0.1f, 256.0f);
 		shader.setMatFour("projection", projection);
