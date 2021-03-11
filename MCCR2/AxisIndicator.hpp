@@ -1,3 +1,7 @@
+/*! \file AxisIndicator.hpp
+* \brief To draw an axis indicator. Only used for development.
+*/
+
 #include "Renderer.hpp"
 #include "Shader.hpp"
 #include <string>
@@ -5,7 +9,9 @@
 #include <vector>
 using namespace std;
 
-
+/*! \class AxisIndicator.hpp
+* \brief To draw an axis indicator. Only used for development.
+*/
 class AxisIndicator
 {
 public:
@@ -131,27 +137,22 @@ void AxisIndicator::draw(const mat4& persp, int screenX, int screenY)
 	glLineWidth(5);
 	mat4 t = mat4(1);
 
-
-
-
 	t = translate(t, vec3(screenX/2, screenY/2, 0));
-
-	t = rotate(t, radians(cam->yaw), vec3(0, 1, 0));
-	t = rotate(t, radians(cam->pitch), vec3(-cos(radians(cam->yaw)), 0, -sin(radians(cam->yaw))));
-	//t = rotate(t, radians(cam->pitch)), vec3(0, 0, -1));
+	t = rotate(t, radians(cam->yaw-90), vec3(0, 1, 0));
+	t = rotate(t, radians(cam->pitch), vec3(-cos(radians(cam->yaw-90)), 0, -sin(radians(cam->yaw - 90))));
 	t = scale(t, vec3(5.0f));
-	//t = rotate(t, radians(45.0f), vec3(1, 1, 1));
 
 	axisShader.setMatFour("transform", t);
-	//axisShader.setMatFour("projection", mat4(1.0));
-	axisShader.setMatFour("projection", glm::ortho(0.0f, (float)screenX, 0.0f, (float)screenY, -100.0f, 100.0f));
+	axisShader.setMatFour("projection", glm::ortho(0.0f, (float)screenX, 0.0f, (float)screenY, -1000000.0f, 1000000.0f));
 	
-	//vec3 a = cam->front - cam->position;
-	//mat4 view = lookAt(vec3(40), vec3(0), vec3(0, 1, 0));
+	/*mat4 viewMat = mat4(cam->right.x, cam->right.y, cam->right.z, cam->front.x*20.0f,
+		cam->up.x, cam->up.y, cam->up.z, cam->front.y * 20.0f,
+		cam->front.x, cam->front.y, cam->front.z, cam->front.z * 20.0f,
+		0.0f, 0.0f, 0.0f, 1.0f);
+	viewMat = transpose(viewMat);
 	
 	
-	//axisShader.setMatFour("view", view);
-
+	axisShader.setMatFour("view", viewMat);*/
 	glBindVertexArray(VAO);
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 

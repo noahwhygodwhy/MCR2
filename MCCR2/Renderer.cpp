@@ -43,10 +43,7 @@ void processInput(GLFWwindow* window, Camera& cam)
 	glfwGetWindowSize(window, &width, &height);
 
 
-	//float start = glfwGetTime();
 	cam.mouseInput((xpos - previousX) , (previousY - ypos)/height*width, true);
-	//float end = glfwGetTime();
-	//printf("%f\n", end - start);
 
 	previousX = xpos;
 	previousY = ypos;
