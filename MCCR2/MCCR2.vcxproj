@@ -150,6 +150,8 @@
     <None Include="axisVertShader.glsl" />
     <None Include="fragShader.glsl" />
     <None Include="packages.config" />
+    <None Include="textFragShader.glsl" />
+    <None Include="textVertShader.glsl" />
     <None Include="vertShader.glsl" />
   </ItemGroup>
   <ItemGroup>
@@ -173,6 +175,7 @@
     <ClInclude Include="NBTTags.hpp" />
     <ClInclude Include="Renderer.hpp" />
     <ClInclude Include="Shader.hpp" />
+    <ClInclude Include="TextRenderer.hpp" />
     <ClInclude Include="World.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

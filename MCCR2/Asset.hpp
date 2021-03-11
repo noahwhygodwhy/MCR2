@@ -21,6 +21,7 @@ using namespace nlohmann;
 
 using namespace glm;
 
+static const string FONT_DIR_PATH = "../../MCCR2/minecraft/textures/";
 static const string TEXTURE_DIR_PATH = "../../MCCR2/minecraft/textures/";
 static const string MODEL_DIR_PATH = "../../MCCR2/minecraft/models/";
 static const string BLOCKSTATE_DIR_PATH = "../../MCCR2/minecraft/blockstates/";

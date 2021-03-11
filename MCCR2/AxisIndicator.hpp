@@ -8,7 +8,12 @@
 #include "Camera.hpp"
 #include <vector>
 #include "Config.h"
+#include "Asset.hpp"
+
 using namespace std;
+
+
+
 
 /*! \class AxisIndicator.hpp
 * \brief To draw an axis indicator. Only used for development.
@@ -23,6 +28,7 @@ private:
 	unsigned int VAO = 0, VBO = 0;
 	Shader axisShader;
 	Camera* cam;
+	unsigned int fontTexture;
 	
 };
 
@@ -107,6 +113,9 @@ vector<CV> axisVerts = {
 
 inline AxisIndicator::AxisIndicator(Camera* c)
 {
+
+	createTexture(PATH)
+
 	this->cam = c;
 	this->axisShader = Shader("axisVertShader.glsl", "axisFragShader.glsl");
 	

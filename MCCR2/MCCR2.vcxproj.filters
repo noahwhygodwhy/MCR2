@@ -31,6 +31,12 @@
     <None Include="axisVertShader.glsl">
       <Filter>Source Files\shaders</Filter>
     </None>
+    <None Include="textFragShader.glsl">
+      <Filter>Source Files\shaders</Filter>
+    </None>
+    <None Include="textVertShader.glsl">
+      <Filter>Source Files\shaders</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -90,6 +96,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Config.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TextRenderer.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
