@@ -6,7 +6,6 @@ layout (location = 2) in vec2 tintUV;
 layout (location = 3) in float texIndex;
 //layout (location = 3) in vec3 tintColor;
 
-uniform mat4 transform;
 uniform mat4 view;
 uniform mat4 projection;
 
@@ -24,6 +23,6 @@ void main()
     tintCoord = tintUV;
     fragPos = aPos;
     //passedTint = tintColor;
-    gl_Position = projection*view*transform*vec4(aPos, 1.0);
+    gl_Position = projection*view*vec4(aPos, 1.0);
 }
 
