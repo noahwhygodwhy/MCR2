@@ -51,7 +51,8 @@ struct Face
 {	
 	int texture = 0;///<The index of the texture that the face should be shaded with
 	uint8_t cullFace = 0b00000000;///<A binary flag to indicate which face this is. null/null/+y/-y/+x/-x/+z/-z
-	ivec4 uv = ivec4(0, 0, 16, 16);///<A pair of uv coordinates in the range of 0 to 16*/
+	ivec2 uv00 = ivec2(0, 0);///<A pair of uv coordinates in the range of 0 to 16*/
+	ivec2 uv11 = ivec2(16, 16);///<A pair of uv coordinates in the range of 0 to 16*/
 	int rotation = 0;///<The UV rotation of the face
 	int tintIndex = -1;///<An int representing the tint index. -1 means it should not be tinted, Anything else represents it should be tinted. The exact number representing what type of tint.
 };

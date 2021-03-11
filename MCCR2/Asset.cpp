@@ -170,7 +170,8 @@ Face Asset::parseFaceJson(const json& faces, const string& faceStr, const unorde
 	if (faces[faceStr].contains("uv"))
 	{
 		json uv = faces[faceStr]["uv"];
-		toReturn.uv = vec4(stoi(uv[0].dump()), stoi(uv[1].dump()), stoi(uv[2].dump()), stoi(uv[3].dump()));//returns the uv in the order x1, y1, x2, y2
+		toReturn.uv00 = ivec2(stoi(uv[0].dump()), stoi(uv[1].dump()));
+		toReturn.uv11 = ivec2(stoi(uv[2].dump()), stoi(uv[3].dump()));//returns the uv in the order x1, y1, x2, y2
 		//toReturn.uv = vec4(stoi(uv[0].dump()), stoi(uv[1].dump()), stoi(uv[2].dump()), stoi(uv[3].dump()));//returns the uv in the order x1, y1, x2, y2
 	}
 	if (faces[faceStr].contains("tintindex"))
