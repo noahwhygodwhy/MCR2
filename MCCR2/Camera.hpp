@@ -34,6 +34,7 @@ enum class Direction {
 */
 class Camera
 {
+public:
 	vec3 position; ///<The position of the camera
 	vec3 front; ///<The front vector of the camera
 	vec3 right; ///<The right vector of the camera
@@ -48,7 +49,6 @@ class Camera
 	float mouseSensitivity; ///<How fast the camera rotates by the mouse (not yet implemented)
 	float zoom; ///<How zoomed in the camera is
 
-public:
 	/*! \fn Camera
 	* \param initPos The initial position
 	* \param initUp The initial up vector of the camera + the worldUp.
