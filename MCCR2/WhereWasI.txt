@@ -1,0 +1,15 @@
+Future noah,
+
+So you were dealing with an issues with UVs not being applied correctly to blocks.
+
+You traced this issue to minecraft coordinate systems being weird. (rotated by 90 or 180 degrees, idk)
+
+You maaaaybe fixed it, but UV rotation is still messed up. It should bea easier to figure out now that blocks are (probably) being constructed correctly.
+Pistons were a bad example as they used the same texture on multiple sides, so when the wrong face was on the wrong side, it was hard to tell. stuff like crafting tables,
+and furnaces, stuff with different textures on different sides.
+
+Good luck,
+
+Past Noah
+
+PS The axis indicator doodad is still contradicting the text display of coordinates.
