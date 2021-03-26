@@ -57,7 +57,6 @@ void World::adjustLoadedChunks()
 	{
 		for (int z = this->chkz - this->range; z <= this->chkz + this->range; z++)
 		{
-			if(x && z != 0)
 			//printf("world loading chunk %i,%i\n", x, z);
 			if (this->chunks.count(ivec2(x, z)) == 0)
 			{

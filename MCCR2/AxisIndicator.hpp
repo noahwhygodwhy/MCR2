@@ -2,6 +2,9 @@
 * \brief To draw an axis indicator. Only used for development.
 */
 
+#ifndef AXIS_INIDCATOR_H
+#define AXIS_INIDCATOR_H
+
 #include "Renderer.hpp"
 #include "Shader.hpp"
 #include <string>
@@ -23,7 +26,7 @@ class AxisIndicator
 public:
 	AxisIndicator(Camera* c);
 	~AxisIndicator();
-	void draw(const mat4& persp, int screenX, int screenY);
+	void draw(int screenX, int screenY);
 private:
 	unsigned int VAO = 0, VBO = 0;
 	Shader axisShader;
@@ -31,7 +34,6 @@ private:
 	unsigned int fontTexture;
 	
 };
-
 
 
 
@@ -114,7 +116,7 @@ vector<CV> axisVerts = {
 inline AxisIndicator::AxisIndicator(Camera* c)
 {
 
-	createTexture(PATH)
+	//createTexture(FONT_DIR_PATH);
 
 	this->cam = c;
 	this->axisShader = Shader("axisVertShader.glsl", "axisFragShader.glsl");
@@ -141,7 +143,7 @@ inline AxisIndicator::AxisIndicator(Camera* c)
 
 }
 
-void AxisIndicator::draw(const mat4& persp, int screenX, int screenY)
+void AxisIndicator::draw(int screenX, int screenY)
 {
 	this->axisShader.use();
 	glLineWidth(5);
@@ -174,3 +176,5 @@ AxisIndicator::~AxisIndicator()
 {
 }
 
+
+#endif AXIS_INIDCATOR_H

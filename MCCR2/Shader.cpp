@@ -12,7 +12,7 @@ using namespace std;
 
 string fileToString(string filename)
 {
-    printf("opening file %s\n", filename.c_str());
+    //printf("opening file %s\n", filename.c_str());
     string content;
     int length;
     ifstream stream(filename);
@@ -21,8 +21,8 @@ string fileToString(string filename)
     stream.seekg(0, ios::beg);
     content.resize(length);
     stream.read(content.data(), length);
-    printf("returning\n");
-    printf("%s\n", content.c_str());
+    //printf("returning\n");
+    //printf("%s\n", content.c_str());
     return content;
     //stream.close();
     //return content;
@@ -33,7 +33,7 @@ unsigned int makeVertexShader(string filename)
 {
     string vertexShaderSource = fileToString(filename);
     const GLchar* const numChar = vertexShaderSource.data();
-    printf("%s\n", vertexShaderSource.c_str());
+    //printf("%s\n", vertexShaderSource.c_str());
     unsigned int vertexShader;
     vertexShader = glCreateShader(GL_VERTEX_SHADER);
     glShaderSource(vertexShader, 1, &numChar, NULL);

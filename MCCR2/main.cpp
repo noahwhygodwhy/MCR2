@@ -23,7 +23,6 @@
 #include "Asset.hpp"
 #include "Config.h"
 #include <iostream>
-#include "TextRenderer.hpp"
 
 using namespace std;
 using namespace glm;
@@ -63,7 +62,6 @@ int main(void)
 
 	Asset* ass = new Asset(r.loadTextures(TEXTURE_DIR_PATH));
 
-	loadFontTextures();
 
 	World w(saveFolder + "/region", ass, radius, initPos.x, initPos.z);
 

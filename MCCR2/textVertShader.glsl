@@ -1,25 +1,17 @@
 #version 330 core
 
 layout (location = 0) in vec2 pos;
-layout (location = 1) in float id;
+layout (location = 1) in vec2 uv;
 
-uniform mat4 view;
 uniform mat4 projection;
 
-out vec2 texCoord;
-out vec2 tintCoord;
-out float texID;
-out vec3 fragPos;
-//out vec3 passedTint;
+
+out vec2 frag_uv;
 
 void main()
 {
 
-    texID = texIndex;
-    texCoord = uv;
-    tintCoord = tintUV;
-    fragPos = aPos;
-    //passedTint = tintColor;
-    gl_Position = projection*view*vec4(aPos, 1.0);
+    frag_uv = uv;
+    gl_Position = projection*vec4(pos, 0.0, 1.0);
 }
 

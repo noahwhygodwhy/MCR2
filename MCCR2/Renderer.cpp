@@ -10,6 +10,8 @@
 #include <glm/glm.hpp>
 #include "Renderer.hpp"
 #include "AxisIndicator.hpp"
+#include "TextRenderer.hpp"
+
 
 
 using namespace std;
@@ -24,6 +26,12 @@ float lastFrame = 0.0f; // Time of last frame
 
 ////////////////////////////////////
 
+string ff(float f)//format float
+{
+	stringstream st;
+	st << fixed << setprecision(2) << f;
+	return st.str();
+}
 
 void frameBufferSizeCallback(GLFWwindow* window, int width, int height)
 {
@@ -118,6 +126,7 @@ float Renderer::normalizeTexture(const int& texID)
 
 void createTexture(unsigned int* texture, string path, int wantedChannels)
 {
+	printf("creating texture %s\n", path.c_str());
 	int width, height, channels;
 	glGenTextures(1, texture);
 	glBindTexture(GL_TEXTURE_2D, *texture);
@@ -131,18 +140,15 @@ void createTexture(unsigned int* texture, string path, int wantedChannels)
 
 	unsigned char* data = stbi_load(path.c_str(), &width, &height, &channels, wantedChannels);
 
-
-	//glTexStorage2D(GL_TEXTURE_2D, 1, GL_SRGB8_ALPHA8, width, height);
-	//printf("it has %i channels\n", channels);
+	printf("it has %i channels\n", channels);
 	if (data == NULL)
 	{
 		fprintf(stderr, "image not loaded\n");
 		fprintf(stderr, "%s\n", path.c_str());
 		exit(-1);
 	}
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
 
-
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
 
 	stbi_image_free(data);
 }
@@ -157,7 +163,7 @@ unordered_map<string, int> Renderer::loadTextures(string path)
 	fflush(stdout);
 	glActiveTexture(GL_TEXTURE0);
 
-	createTexture(&foliageColorMap, path + string("colormap/foliage.png"), 3);
+	createTexture(&foliageColorMap, path + string("colormap/foliage.png"), 4);
 
 	/*glGenTextures(1, &(this->foliageColorMap));
 	glBindTexture(GL_TEXTURE_2D, this->foliageColorMap);
@@ -191,8 +197,8 @@ unordered_map<string, int> Renderer::loadTextures(string path)
 	printf("foliage color map is null: %s\n", foliageColorMap == 0 ? "true" : "false");
 
 	stbi_image_free(data);
-
-	printf("foliage image loaded\n");*/
+	*/
+	printf("foliage image loaded\n");
 
 
 	int width, height, channels;
@@ -269,6 +275,10 @@ unordered_map<string, int> Renderer::loadTextures(string path)
 
 	printf("all textures loaded into the largeTextureStack\n");
 
+
+
+	loadFontTextures();
+
 	return toReturn;
 }
 
@@ -315,6 +325,7 @@ void Renderer::run(World& world, vec3 initPos)
 
 	AxisIndicator ai(&cam);
 
+	Text te(vec2(0, screenY/2.0f), "hello world.", 1.0);
 
 	cam.setPos(initPos);
 	world.givePos(cam.getPos());
@@ -347,9 +358,6 @@ void Renderer::run(World& world, vec3 initPos)
 		shader.setInt("foliageColorMap", 0);
 		shader.setInt("largeTextureStack", 1);
 
-		//mat4 transform = scale(mat4(1.0), vec3(-1, 1, -1));
-
-
 		mat4 view = cam.getView();
 		shader.setMatFour("view", view);
 		mat4 projection = perspective(radians(70.0f), (float)screenX / (float)screenY, 0.1f, 256.0f);
@@ -357,10 +365,13 @@ void Renderer::run(World& world, vec3 initPos)
 
 		world.givePos(cam.getPos());
 		world.draw();
-		
-		//glDrawArrays(GL_TRIANGLES, 0, originChunk.size());
-		//glDrawArrays(GL_TRIANGLES, 0, originChunk.size());
-		ai.draw(projection, screenX, screenY);
+		ai.draw(screenX, screenY);
+
+		vec3 camPos = cam.getPos();
+
+		te.setText("x,y,z " + ff(camPos.x) +"," + ff(camPos.y) + "," + ff(camPos.z));
+		//te.setText("goodbye\nworld.");
+		te.draw(screenX, screenY);
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}
