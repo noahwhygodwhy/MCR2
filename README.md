@@ -6,6 +6,7 @@ It is working a lot better than attempt #1 though. Chunk creation has not only b
 
 ![Preview](https://i.imgur.com/eWAIbED.jpeg)
 
+Edit: Currently it's a bit broken. Sorry.
 I'll make it user friendly in the future, but if you reaaaallly want to try it out I'm sure you can figure it out. main.cpp has the path to the save file. The paths to the minecraft asset stuff is all relative. There's a copy of it in the repository. It needs nuget packages glm and glfw in visual studio 19. Language standard C++17. Comment out "#define TEST" for better performance (enables threading). Also have to have command line arguments to disable depreciation warnings as one of the header files it uses had a bunch of depreciated stuff. Will update when it's working better.
 
 Application flow is as follows:
